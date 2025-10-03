@@ -9,7 +9,7 @@ export default class UsersController {
    */
   async index({view}: HttpContext) {
     const users = await User.all()
-    return JSON.stringify(users)
+    return view.render('pages/users/index', { users })
   }
 
   /**
@@ -32,17 +32,29 @@ export default class UsersController {
   /**
    * Show individual record
    */
-  async show({ params }: HttpContext) {}
+  async show({ params, view }: HttpContext) {
+    const user = await User.findOrFail(params.id)
+    return view.render('pages/users/show', { user })
+  }
 
   /**
    * Edit individual record
    */
-  async edit({ params }: HttpContext) {}
+  async edit({ params, view }: HttpContext) {
+    const user = await User.findOrFail(params.id)
+    return view.render('pages/users/create', { user })
+  }
 
   /**
    * Handle form submission for the edit action
    */
-  async update({ params, request }: HttpContext) {}
+  async update({ params, request }: HttpContext) {
+    const user = await User.findOrFail(params.id)
+    const data = request.only(['username', 'email', 'age'])
+    user.merge(data)
+    await user.save()
+    return 
+  }
 
   /**
    * Delete record

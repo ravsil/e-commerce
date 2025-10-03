@@ -1,0 +1,49 @@
+@component('pages/layout/app')
+  @slot('main')
+    @let(url = product ? route('products.update', { id: product.id }, { qs: { _method: 'PUT' } }) : route('products.store'))
+
+    @form({ action: url, method: 'POST' })
+      <div>
+        <label for="name">
+          Nome do Produto
+        </label>
+
+        @!input({
+          type: 'text',
+          name: 'name',
+          placeholder: 'nome ...',
+          value: product?.name || ''
+        })
+      </div>
+
+      <div>
+        <label for="price">
+          Preço
+        </label>
+
+        @!input({
+          type: 'number',
+          name: 'price',
+          placeholder: 'preço ...',
+          value: product?.price || ''
+        })
+      </div>
+
+      <div>
+        <label for="description">
+          Descrição
+        </label>
+
+        @!textarea({
+          name: 'description',
+          value: product?.description || ''
+        })
+      </div>
+
+      <button>
+        {{ product ? 'salvar' : 'criar' }}
+      </button>
+      
+    @end
+  @endslot
+@endcomponent

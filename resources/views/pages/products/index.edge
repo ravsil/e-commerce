@@ -1,0 +1,22 @@
+@component('pages/layout/app')
+  @slot('main')
+  <div class="flex flex-col gap-2">
+    <h1 class="place-self-center text-3xl">Products</h1>
+    <div class="flex flex-col gap-2 place-self-center">
+      @each(product in products)
+        <div class="bg-primary p-2 rounded text-amber-50 border border-primary-border">
+          <p>Nome: {{ product.name }}<br> Preço: R${{ product.price }}<br> Descrição: {{ product.description }}</p>
+          <span>  
+            <a class="text-secondary" href="{{route('products.edit', {id: product.id})}}">Editar</a>
+            @form({ action: route('products.destroy', { id: product.id }, { qs: { _method: 'DELETE' }}) })
+              <button type="submit">
+                deletar
+              </button>
+            @end
+          </span>
+        </div>
+      @endeach
+    </div>
+  </div>
+  @endslot
+@endcomponent

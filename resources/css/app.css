@@ -1,3 +1,11 @@
 @import "tailwindcss";
 @source "../views";
 
+@theme{
+  --color-primary: #FF6B99;
+  --color-secondary: #57FA68;
+  --color-secondary-dark: #70BA77;
+  --color-primary-dark: #A57181;
+  --color-primary-border: #503F44;
+  --color-secondary-border: #687A6A;
+}

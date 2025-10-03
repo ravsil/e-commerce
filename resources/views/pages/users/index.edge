@@ -1,0 +1,10 @@
+@component('pages/layout/app')
+  @slot('main')
+    <h1 class="place-self-center text-3xl">Users</h1>
+    <ul>
+      @each(user in users)
+        <li>{{ user.username }} ({{ user.email }})</li>
+      @endeach
+    </ul>
+  @endslot
+@endcomponent

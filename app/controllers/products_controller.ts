@@ -1,42 +1,56 @@
 import type { HttpContext } from '@adonisjs/core/http'
 
+import Product from '#models/product'
+
+import { createProductValidator } from '#validators/product'
+
 export default class ProductsController {
-  /**
-   * Display a list of resource
-   */
-  async index({}: HttpContext) {
-    return 'List of products'
+  public async index({ view }: HttpContext) {
+    const products = await Product.all()
+
+    return view.render('pages/products/index', { products })
   }
 
-  /**
-   * Display form to create a new record
-   */
-  async create({}: HttpContext) {
-    return 'Display form to create a new product'
+  public async show({ params, view }: HttpContext) {
+    const product = await Product.findOrFail(params.id)
+
+    return view.render('pages/products/show', { product })
   }
 
-  /**
-   * Handle form submission for the create action
-   */
-  async store({ request }: HttpContext) {}
+  public async create({ view }: HttpContext) {
+    return view.render('pages/products/create')
+  }
 
-  /**
-   * Show individual record
-   */
-  async show({ params }: HttpContext) {}
+  public async edit({ params, view }: HttpContext) {
+    const product = await Product.findOrFail(params.id)
 
-  /**
-   * Edit individual record
-   */
-  async edit({ params }: HttpContext) {}
+    return view.render('pages/products/create', { product })
+  }
 
-  /**
-   * Handle form submission for the edit action
-   */
-  async update({ params, request }: HttpContext) {}
+  public async store({ request, response }: HttpContext) {
+    const payload = await request.validateUsing(createProductValidator)
 
-  /**
-   * Delete record
-   */
-  async destroy({ params }: HttpContext) {}
+    const product = await Product.create(payload)
+
+    return response.redirect().toRoute('products.show', { id: product.id })
+  }
+
+  public async update({ params, request, response }: HttpContext) {
+    const product = await Product.findOrFail(params.id)
+
+    const payload = await request.validateUsing(createProductValidator)
+
+    product.merge(payload)
+    await product.save()
+
+    return response.redirect().toRoute('products.show', { id: product.id })
+  }
+
+  public async destroy({ params, response }: HttpContext) {
+    const product = await Product.findOrFail(params.id)
+
+    await product.delete()
+
+    return response.redirect().toRoute('products.index')
+  }
 }

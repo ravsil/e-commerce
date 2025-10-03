@@ -1,8 +1,8 @@
 @component('pages/layout/app')
   @slot('main')
-    @let(url = user ? route('users.create', { id: user.id }, { qs: { _method: 'PUT' } }) : route('users.store'))
+    @let(url = user ? route('users.update', { id: user.id }, { qs: { _method: 'PUT' } }) : route('users.store'))
 
-    @form({ action: route('users.store'), method: 'POST' })
+    @form({ action: url, method: 'POST' })
       <div>
         <label for="username">
           Nome do Usuário

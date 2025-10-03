@@ -1,0 +1,18 @@
+@component('pages/layout/app')
+  @slot('main')
+    <div>
+      <h1>Produto</h1>
+    </div>
+    <div>
+      <span>
+        {{ product.name }}
+      </span>
+      <span>
+        {{ product.price }}
+      </span>
+      <span>
+        {{ product.description }}
+      </span>
+    </div>
+  @endslot
+@endcomponent

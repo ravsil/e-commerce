@@ -9,7 +9,10 @@
 <body>
   @include('components/header')
   <div class="flex flex-col gap-2 place-self-center">
-    <a href='{{ route("users.create") }}'>Cadastro</a>
+    <a href='{{ route("users.create") }}'>Cadastrar Usuário</a>
+    <a href='{{ route("products.create") }}'>Criar produto</a>
+    <a href='{{ route("users.index") }}'>Listar Usuários</a>
+    <a href='{{ route("products.index") }}'>Listar Produtos</a>
   </div>
 </body>
 </html>
