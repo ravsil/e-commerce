@@ -1,0 +1,59 @@
+@component('pages/layout/app')
+  @slot('main')
+    @let(url = user ? route('users.create', { id: user.id }, { qs: { _method: 'PUT' } }) : route('users.store'))
+
+    @form({ action: route('users.store'), method: 'POST' })
+      <div>
+        <label for="username">
+          Nome do Usuário
+        </label>
+
+        @!input({
+          type: 'text',
+          name: 'username',
+          placeholder: 'nome ...',
+          value: product?.name || ''
+        })
+      </div>
+
+      <div>
+        <label for="age">
+          Idade
+        </label>
+
+        @!input({
+          type: 'number',
+          name: 'age',
+          placeholder: 'idade ...',
+          value: user?.age || ''
+        })
+      </div>
+
+      <div>
+        <label for="email">
+          E-mail
+        </label>
+
+        @!input({
+          type: 'email',
+          name: 'email',
+          placeholder: 'email ...',
+          value: user?.email || ''
+        })
+      </div>
+      <div>
+        <label for="password">
+          Senha
+        </label>
+
+        @!input({
+          type: 'password',
+          name: 'password',
+          placeholder: 'senha ...',
+          value: ''
+        })
+      </div>
+      <button> criar</button>
+    @end
+  @endslot
+@endcomponent

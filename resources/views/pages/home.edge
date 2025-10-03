@@ -7,6 +7,9 @@
   <title>Document</title>
 </head>
 <body>
-  <h1 class="bg-blue-950">Hello World</h1>
+  @include('components/header')
+  <div class="flex flex-col gap-2 place-self-center">
+    <a href='{{ route("users.create") }}'>Cadastro</a>
+  </div>
 </body>
 </html>

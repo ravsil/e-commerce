@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>oi</title>
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+</head>
+<body>
+  @include('components/header')
+
+  <section>
+    {{{ await $slots.main() }}}
+  </section>
+
+</body>
+</html>

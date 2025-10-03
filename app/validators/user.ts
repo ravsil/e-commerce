@@ -1,0 +1,10 @@
+import vine from '@vinejs/vine'
+
+export const createUserValidator = vine.compile(
+  vine.object({
+    username: vine.string().minLength(3).maxLength(30),
+    age: vine.number().min(1).max(120).optional(),
+    email: vine.string().email(),
+    password: vine.string().minLength(3),
+  })
+)
