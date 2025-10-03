@@ -7,7 +7,10 @@ export default class UsersController {
   /**
    * Display a list of resource
    */
-  async index({}: HttpContext) {}
+  async index({view}: HttpContext) {
+    const users = await User.all()
+    return JSON.stringify(users)
+  }
 
   /**
    * Display form to create a new record
@@ -23,7 +26,7 @@ export default class UsersController {
     const data = await request.validateUsing(createUserValidator)
     await User.create(data)
 
-    return response.redirect().toRoute('/')
+    return response.redirect().toRoute('users.index')
   }
 
   /**
