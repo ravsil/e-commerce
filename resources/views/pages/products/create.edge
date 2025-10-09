@@ -2,13 +2,17 @@
   @slot('main')
     @let(url = product ? route('products.update', { id: product.id }, { qs: { _method: 'PUT' } }) : route('products.store'))
 
-    <form action="{{ url }}" method="POST" enctype="multipart/form-data">
-        {{ csrfField() }}
-  <input type="text" name="name" placeholder="nome ..." value="{{ product?.name || '' }}">
-  <input type="number" name="price" placeholder="preço ..." value="{{ product?.price || '' }}">
-  <textarea name="description">{{ product?.description || '' }}</textarea>
-  <input type="file" name="image" accept="image/jpeg,image/png">
-  <button>{{ product ? 'salvar' : 'criar' }}</button>
+  <form action="{{ url }}" method="POST" enctype="multipart/form-data">
+    {{ csrfField() }}
+    <label for="name">Nome</label>
+    <input type="text" name="name" placeholder="nome ..." value="{{ product?.name || '' }}">
+    <label for="price">Preço</label>
+    <input type="number" name="price" placeholder="preço ..." value="{{ product?.price || '' }}">
+    <label for="description">Descrição</label>
+    <textarea name="description">{{ product?.description || '' }}</textarea>
+    <label for="image">Imagem</label>
+    <input type="file" name="image" accept="image/jpeg,image/png">
+    <button>{{ product ? 'salvar' : 'criar' }}</button>
   </form>
 
   @endslot

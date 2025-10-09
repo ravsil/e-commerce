@@ -6,6 +6,11 @@
       @each(product in products)
         <div class="bg-primary p-2 rounded text-amber-50 border border-primary-border">
           <p>Nome: {{ product.name }}<br> Preço: R${{ product.price }}<br> Descrição: {{ product.description }}</p>
+          <span>
+            @each(image in product.images)
+              <img class="w-20 h-20" src="{{ route('product_images.show', { id: image.name,}) }}">
+            @endeach
+          </span>
           <span>  
             <a class="text-secondary" href="{{route('products.edit', {id: product.id})}}">Editar</a>
             @form({ action: route('products.destroy', { id: product.id }, { qs: { _method: 'DELETE' }}) })

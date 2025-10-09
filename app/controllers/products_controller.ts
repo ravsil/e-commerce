@@ -10,14 +10,16 @@ import { createProductValidator } from '#validators/product'
 export default class ProductsController {
   public async index({ view }: HttpContext) {
     const products = await Product.all()
-
+    for (const product of products) {
+      await product.load('images')
+    }
     return view.render('pages/products/index', { products })
   }
 
   public async show({ params, view }: HttpContext) {
     const product = await Product.findOrFail(params.id)
-    await product.load('images')
-    return view.render('pages/products/show', { product })
+    const image = await product.load('images')
+    return view.render('pages/products/show', { product, image })
   }
 
   public async create({ view }: HttpContext) {
