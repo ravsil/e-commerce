@@ -8,7 +8,7 @@
           <p>Nome: {{ product.name }}<br> Preço: R${{ product.price }}<br> Descrição: {{ product.description }}</p>
           <span>
             @each(image in product.images)
-              <img class="w-20 h-20" src="{{ route('product_images.show', { id: image.name,}) }}">
+              <img class="w-20 h-20" src="{{ route('images.show', { id: image.name,}) }}">
             @endeach
           </span>
           <span>  

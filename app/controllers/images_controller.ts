@@ -1,7 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import app from '@adonisjs/core/services/app'
 
-import Image from '#models/product_image'
+import Image from '#models/image'
 
 export default class ImagesController {
   public async show({ params, response }: HttpContext) {

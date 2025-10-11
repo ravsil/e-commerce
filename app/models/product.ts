@@ -2,7 +2,7 @@ import { DateTime } from 'luxon'
 import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
-import Image from '#models/product_image'
+import Image from '#models/image'
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })

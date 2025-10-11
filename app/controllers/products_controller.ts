@@ -3,7 +3,7 @@ import { cuid } from '@adonisjs/core/helpers'
 
 import Product from '#models/product'
 import app from '@adonisjs/core/services/app'
-import Image from '#models/product_image'
+import Image from '#models/image'
 
 import { createProductValidator } from '#validators/product'
 
