@@ -1,0 +1,34 @@
+@component('pages/layout/app')
+  @slot('main')
+  <div>
+        @form({ action: route('auth.login'), method: 'POST' })
+          <div>
+            <label for="email">
+              Email
+            </label>
+            <input  
+              id="email" 
+              name="email" 
+              type="email" 
+              placeholder="seu@email.com"
+              required
+            >
+          </div>
+
+          <div class="mb-6">
+            <label for="password">
+              Senha
+            </label>
+            <input 
+              id="password" 
+              name="password" 
+              type="password" 
+              placeholder="********"
+              required
+            >
+          </div>
+            <button>Entrar</button>
+        @end
+        </div>
+    @endslot
+@endcomponent

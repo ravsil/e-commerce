@@ -1,13 +1,45 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '../models/user.js'
 import { createUserValidator } from '../validators/user.js'
-import router from '@adonisjs/core/services/router'
+// import router from '@adonisjs/core/services/router'
 
 export default class UsersController {
   /**
+   * Show login form
+   */
+  async showLogin({ view }: HttpContext) {
+    return view.render('pages/users/login')
+  }
+
+  /**
+   * Handle login attempt
+   */
+  async login({ request, response, auth, session }: HttpContext) {
+    const { email, password } = request.only(['email', 'password'])
+
+    try {
+      const user = await User.verifyCredentials(email, password)
+      await auth.use('web').login(user)
+
+      return response.redirect().toRoute('products.index')
+    } catch {
+      session.flash('error', 'Email ou senha inválidos')
+      return response.redirect().back()
+    }
+  }
+
+  /**
+   * Handle logout
+   */
+  async logout({ auth, response }: HttpContext) {
+    await auth.use('web').logout()
+    return response.redirect().toRoute('auth.login')
+  }
+
+  /**
    * Display a list of resource
    */
-  async index({view}: HttpContext) {
+  async index({ view }: HttpContext) {
     const users = await User.all()
     return view.render('pages/users/index', { users })
   }
@@ -53,11 +85,11 @@ export default class UsersController {
     const data = request.only(['username', 'email', 'age'])
     user.merge(data)
     await user.save()
-    return 
+    return
   }
 
   /**
    * Delete record
    */
-  async destroy({ params }: HttpContext) {}
+  // async destroy({ params }: HttpContext) { }
 }
