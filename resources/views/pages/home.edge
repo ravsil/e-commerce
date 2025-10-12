@@ -6,15 +6,19 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <title>Document</title>
 </head>
-<body class="bg-gray-100">
-  <div class="place-items-center">
-    @include('components/header')
-    <div class="flex flex-col gap-3">
-      <a href='{{ route("users.create") }}'>Cadastrar Usuário</a>
-      <a href='{{ route("products.create") }}'>Criar produto</a>
-      <a href='{{ route("users.index") }}'>Listar Usuários</a>
-      <a href='{{ route("products.index") }}'>Listar Produtos</a>
+<body class="bg-gray-100 h-screen">
+  @include('components/header')
+  <div class="flex gap-3 place-items-center h-2/4 justify-center">
+    <div class="bg-secondary text-amber-50 flex flex-col gap-4 p-4 rounded-md shadow-bottom md:w-1/4 lg:w-1/5">
+      <a href='{{ route("users.create") }}' class="bg-secondary-dark text-sm md:text-base border border-green-border rounded-full p-2 
+      shadow-sm shadow-zinc-600/50 text-center hover:shadow-md hover:shadow-zinc-600/50 hover:scale-101 transition duration-150 ease-in">Cadastrar Usuário</a>
+      <a href='{{ route("products.create") }}' class="bg-secondary-dark text-sm md:text-base border border-green-border rounded-full p-2 
+      shadow-sm shadow-zinc-600/50 text-center hover:shadow-md hover:shadow-zinc-600/50 hover:scale-101 transition duration-150 ease-in">Criar produto</a>
+      <a href='{{ route("users.index") }}' class="bg-secondary-dark text-sm md:text-base border border-green-border rounded-full p-2 
+      shadow-sm shadow-zinc-600/50 text-center hover:shadow-md hover:shadow-zinc-600/50 hover:scale-101 transition duration-150 ease-in">Listar Usuários</a>
+      <a href='{{ route("products.index") }}' class="bg-secondary-dark text-sm md:text-base border border-green-border rounded-full p-2 
+      shadow-sm shadow-zinc-600/50 text-center hover:shadow-md hover:shadow-zinc-600/50 hover:scale-101 transition duration-150 ease-in">Listar Produtos</a>
     </div>
-    </div>
+  </div>
 </body>
 </html>
