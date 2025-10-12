@@ -1,0 +1,22 @@
+<button id="customDropdownButton" type="button" class="text-center inline-flex justify-center rounded-md
+ text-sm font-medium text-amber-50 cursor-pointer"
+ aria-expanded="true" aria-haspopup="true">
+  <svg class="h-5 w-5" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+    <path fill-rule="evenodd" d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z" clip-rule="evenodd" />
+  </svg>
+</button>
+
+<div id="customDropdownMenu" 
+    class="origin-top-right absolute top-full right-0 shadow-bottom 
+    shadow-zinc-600/50 mr-4 bg-secondary transition ease-in duration-150 transform opacity-0 -translate-y-2" 
+    aria-orientation="vertical" aria-labelledby="customDropdownButton">
+  
+  <div class="py-1 text-amber-50">
+    <button href="#" class="block px-4 py-2 text-sm cursor-pointer" id="menu-item-0">Meus pedidos</button>
+    <span class=" block px-4 py-2 text-sm cursor-pointer" id="menu-item-2">
+      @form({ action: route('auth.logout'), method: 'POST', class: 'inline' })
+        <button class="cursor-pointer">Sair</button>
+      @end
+    </span>
+  </div>
+</div>

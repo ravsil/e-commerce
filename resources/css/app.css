@@ -1,11 +1,17 @@
 @import "tailwindcss";
 @source "../views";
 
-@theme{
+@theme {
   --color-primary: #FF6B99;
-  --color-secondary: #57FA68;
-  --color-secondary-dark: #70BA77;
+  --color-secondary: #70BA77;
+  --color-secondary-dark: #4EA155;
+  --color-accept: #7770BA;
+  --color-deny: #BA7770;
   --color-primary-dark: #A57181;
   --color-primary-border: #503F44;
-  --color-secondary-border: #687A6A;
+  --color-secondary-border: #98CD9D;
+  --shadow-bottom: 
+    0 8px 12px -6px rgba(0, 0, 0, 0.18),
+    0 4px 8px -6px rgba(0, 0, 0, 0.1);
+
 }

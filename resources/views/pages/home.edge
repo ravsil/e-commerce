@@ -6,13 +6,15 @@
   @vite(['resources/css/app.css', 'resources/js/app.js'])
   <title>Document</title>
 </head>
-<body>
-  @include('components/header')
-  <div class="flex flex-col gap-2 place-self-center">
-    <a href='{{ route("users.create") }}'>Cadastrar Usuário</a>
-    <a href='{{ route("products.create") }}'>Criar produto</a>
-    <a href='{{ route("users.index") }}'>Listar Usuários</a>
-    <a href='{{ route("products.index") }}'>Listar Produtos</a>
-  </div>
+<body class="bg-gray-100">
+  <div class="place-items-center">
+    @include('components/header')
+    <div class="flex flex-col gap-3">
+      <a href='{{ route("users.create") }}'>Cadastrar Usuário</a>
+      <a href='{{ route("products.create") }}'>Criar produto</a>
+      <a href='{{ route("users.index") }}'>Listar Usuários</a>
+      <a href='{{ route("products.index") }}'>Listar Produtos</a>
+    </div>
+    </div>
 </body>
 </html>
