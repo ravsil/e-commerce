@@ -1,5 +1,3 @@
-// resources/js/components/userDropdown.js
-
 document.addEventListener('DOMContentLoaded', function () {
   const dropdownButton = document.getElementById('customDropdownButton')
   const dropdownMenu = document.getElementById('customDropdownMenu')
