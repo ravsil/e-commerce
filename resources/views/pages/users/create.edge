@@ -2,8 +2,8 @@
   @slot('main')
     @let(url = user ? route('users.update', { id: user.id }, { qs: { _method: 'PUT' } }) : route('users.store'))
     <div class="h-1/4 flex w-full justify-center">
-      <div class="place-self-center m-10 p-3 md:p-4 bg-secondary text-amber-50
-      rounded-md shadow-bottom shadow-zinc-600/50 md:w-4/11 lg:w-3/11">
+      <div class="place-self-center m-10 p-3 md:p-4 bg-white text-black
+      shadow-bottom shadow-zinc-600/50 md:w-4/11 lg:w-3/11">
         @form({ action: url, method: 'POST' })
           <div class="flex flex-col gap-1">
             <label for="username">
@@ -55,10 +55,9 @@
               value: ''
             })
           </div>
-          <button type="submit" class=" text-center px-2 py-2 bg-accept rounded-full border-2 
-          border-accept-border place-self-center w-3/5 shadow-sm shadow-zinc-600/50 hover:shadow-md 
-          hover:scale-101 transition duration-150 ease-in">
-            {{ user ? 'Atualizar Usuário' : 'Criar Usuário' }}
+          <button type="submit" class=" text-center px-3 py-3 bg-black place-self-center shadow-sm shadow-zinc-600/50 hover:shadow-md 
+          hover:scale-101 transition duration-150 ease-in text-white">
+            <div class="t-underline">{{ user ? 'Atualizar Usuário' : 'Criar Usuário' }}</div>
           </button>
         @end
       </div>

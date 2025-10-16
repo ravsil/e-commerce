@@ -1,7 +1,7 @@
-<header class="relative bg-secondary w-full flex flex-row 
-px-1 md:px-4 py-2 place-items-center shadow-bottom shadow-zinc-600/50">
+<header class="relative bg-black w-full flex flex-row 
+px-1 md:px-4 py-2 place-items-center">
   <a href="{{ route('/') }}">
-    <h1 class="text-center text-amber-50 text-sm md:text-xl rounded-full p-1 md:p-2 px-4 bg-secondary-dark border-2 border-secondary-border
+    <h1 class="text-center text-white text-sm md:text-xl p-1 md:p-2 px-4 bg-black border-2 
     shadow-sm shadow-zinc-600/50 hover:shadow-md hover:shadow-zinc-600/50 hover:scale-101 transition duration-150 ease-in">
       BDV<br class="md:hidden"> e-commerce<sup>©</sup>
     </h1>
@@ -14,7 +14,7 @@ px-1 md:px-4 py-2 place-items-center shadow-bottom shadow-zinc-600/50">
       </span>
       @include('components/user_dropdown')
     @else
-      <a href="{{ route('auth.login') }}">Entrar</a>
+      <a href="{{ route('auth.login') }}" class="text-white border p-1 md:p-2 px-2">Entrar</a>
     @endif
   </div>
 </header>

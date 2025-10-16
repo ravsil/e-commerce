@@ -1,7 +1,7 @@
 document.addEventListener('DOMContentLoaded', function () {
   const dropdownButton = document.getElementById('customDropdownButton')
   const dropdownMenu = document.getElementById('customDropdownMenu')
-
+  const amor = document.getElementById('vida')
   if (dropdownButton && dropdownMenu) {
     const toggleDropdown = () => {
       dropdownMenu.classList.toggle('opacity-0')

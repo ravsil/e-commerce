@@ -6,9 +6,8 @@
   <title>oi</title>
   @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-gray-100 h-screen">
+<body class="bg-gray-200 h-screen">
   @include('components/header')
-
   <section class="w-full justify-center flex">
     {{{ await $slots.main() }}}
   </section>
