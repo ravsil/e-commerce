@@ -1,6 +1,7 @@
 import type { HttpContext } from '@adonisjs/core/http'
 import User from '../models/user.js'
 import { createUserValidator } from '../validators/user.js'
+import { isAdmin } from '#abilities/main'
 // import router from '@adonisjs/core/services/router'
 
 export default class UsersController {
@@ -39,7 +40,10 @@ export default class UsersController {
   /**
    * Display a list of resource
    */
-  async index({ view }: HttpContext) {
+  async index({ view, bouncer, response }: HttpContext) {
+    if(!(await bouncer.allows(isAdmin))) {
+      return response.status(403).send('Not authorized')
+    }
     const users = await User.all()
     return view.render('pages/users/index', { users })
   }
