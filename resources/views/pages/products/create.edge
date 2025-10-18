@@ -1,19 +1,46 @@
 @component('pages/layout/app')
   @slot('main')
     @let(url = product ? route('products.update', { id: product.id }, { qs: { _method: 'PUT' } }) : route('products.store'))
-
-  <form action="{{ url }}" method="POST" enctype="multipart/form-data">
-    {{ csrfField() }}
-    <label for="name">Nome</label>
-    <input type="text" name="name" placeholder="nome ..." value="{{ product?.name || '' }}">
-    <label for="price">Preço</label>
-    <input type="number" name="price" placeholder="preço ..." value="{{ product?.price || '' }}">
-    <label for="description">Descrição</label>
-    <textarea name="description">{{ product?.description || '' }}</textarea>
-    <label for="image">Imagem</label>
-    <input type="file" name="image" accept="image/jpeg,image/png">
-    <button>{{ product ? 'salvar' : 'criar' }}</button>
-  </form>
-
+    <div class="h-1/4 flex w-full justify-center">
+      <div class="place-self-center m-10 p-3 md:p-4 bg-white text-black
+      shadow-bottom shadow-zinc-600/50 w-9/11 md:w-9/11 md:max-w-6/11">
+        @form({ action: url, method: 'POST', enctype: 'multipart/form-data' })
+          <div class="flex flex-col gap-1">
+            <label for="name" class="font-bold">Nome</label>
+            @!input({
+              type: 'text',
+              name: 'name',
+              placeholder: 'nome ...',
+              value: product?.name || ''
+            })
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="price" class="font-bold">Preço</label>
+            @!input({
+              type: 'number',
+              name: 'price',
+              placeholder: 'preço ...',
+              value: product?.price || ''
+            })
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="description" class="font-bold">Descrição</label>
+            @!textarea({
+              name: 'description',
+              placeholder: 'descrição ...',
+              value: product?.description || ''
+            })
+          </div>
+          <div class="flex flex-col gap-1">
+            <label for="image" class="font-bold">Imagem</label>
+            @include('components/image_input')
+          </div>
+          <button type="submit" class=" text-center px-3 py-3 bg-black place-self-center shadow-sm shadow-zinc-600/50 hover:shadow-md 
+          hover:scale-101 transition duration-150 ease-in text-white">
+            <div class="t-underline">{{ product ? 'Atualizar Produto' : 'Criar Produto' }}</div>
+          </button>
+        @end
+      </div>
+    </div>
   @endslot
 @endcomponent

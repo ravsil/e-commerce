@@ -1,1 +1,3 @@
-<textarea {{ $props.except(['value']).toAttrs() }}>{{ value || '' }}</textarea>
+<textarea class="p-2 text-black bg-gray-100 border-2 inset-shadow-xs focus:outline-none 
+    focus:inset-shadow-sm inset-shadow-zinc-600/50 transition duration-157 ease-in
+    appearance-none" {{ $props.except(['value']).toAttrs() }}>{{ value || '' }}</textarea>

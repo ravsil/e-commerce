@@ -1,24 +1,26 @@
 @component('pages/layout/app')
   @slot('main')
-  <div class="flex flex-col gap-2">
-    <h1 class="place-self-center text-3xl">Products</h1>
-    <div class="flex flex-col gap-2 place-self-center">
+  <div class="flex flex-col gap-2 w-full justify-center">
+    <h1 class="place-self-center text-xl md:text-3xl">Products</h1>
+    <div class="flex flex-col gap-4 place-items-center justify-center w-full">
       @each(product in products)
-        <div class="bg-primary p-2 rounded text-amber-50 border border-primary-border">
-          <p>Nome: {{ product.name }}<br> Preço: R${{ product.price }}<br> Descrição: {{ product.description }}</p>
-          <span>
-            @each(image in product.images)
-              <img class="w-20 h-20" src="{{ route('images.show', { id: image.name,}) }}">
-            @endeach
+        <div class="flex flex-col gap-4 bg-white p-2 text-black shadow-bottom w-8/12">
+          <span class="flex flex-row justify-between">
+            <p class="truncate w-full max-w-xs text-sm md:text-base"><b>Nome:</b> {{ product.name }}<br> <b>Preço:</b> R${{ product.price }}<br> <b>Descrição:</b> {{ product.description }}</p>
+            <span class="hidden md:block">
+              @each(image in product.images)
+              <img class="w-18 h-18" src="{{ route('images.show', { id: image.name,}) }}">
+              @endeach
+            </span>
           </span>
-          <span>  
-            <a class="text-secondary" href="{{route('products.edit', {id: product.id})}}">Editar</a>
+          <span class="flex flex-row justify-between">  
+            <a class="" href="{{route('products.edit', {id: product.id})}}">Editar</a>
             @form({ action: route('products.destroy', { id: product.id }, { qs: { _method: 'DELETE' }}) })
-              <button type="submit">
-                deletar
-              </button>
-            @end
+            <button type="submit">
+              deletar
+            </button>
           </span>
+            @end
         </div>
       @endeach
     </div>
