@@ -1,6 +1,8 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import { cuid } from '@adonisjs/core/helpers'
+import app from '@adonisjs/core/services/app'
 import User from '../models/user.js'
-import { createUserValidator } from '../validators/user.js'
+import { createUserValidator, updateProfileValidator } from '../validators/user.js'
 import { isAdmin } from '#abilities/main'
 // import router from '@adonisjs/core/services/router'
 
@@ -41,7 +43,7 @@ export default class UsersController {
    * Display a list of resource
    */
   async index({ view, bouncer, response }: HttpContext) {
-    if(!(await bouncer.allows(isAdmin))) {
+    if (!(await bouncer.allows(isAdmin))) {
       return response.status(403).send('Not authorized')
     }
     const users = await User.all()
@@ -74,26 +76,51 @@ export default class UsersController {
   }
 
   /**
-   * Edit individual record
-   */
-  async edit({ params, view }: HttpContext) {
-    const user = await User.findOrFail(params.id)
-    return view.render('pages/users/create', { user })
+     * Show profile edit form for the current logged-in user
+     */
+  async edit({ view, auth, response }: HttpContext) {
+    if (!auth.user) {
+      return response.redirect().toRoute('auth.login')
+    }
+
+    const user = auth.user
+    return view.render('pages/users/profile', { user })
   }
 
   /**
-   * Handle form submission for the edit action
+   * Update profile for the current logged-in user
    */
-  async update({ params, request }: HttpContext) {
-    const user = await User.findOrFail(params.id)
-    const data = request.only(['username', 'email', 'age'])
-    user.merge(data)
+  async update({ request, response, auth }: HttpContext) {
+    if (!auth.user) {
+      return response.redirect().toRoute('auth.login')
+    }
+
+    const user = auth.user
+    const payload = await request.validateUsing(updateProfileValidator)
+
+    // Handle profile picture upload if provided
+    if (payload.pfp) {
+      const pfpName = `${cuid()}.${payload.pfp.extname}`
+
+      await payload.pfp.move(app.makePath('tmp/uploads'), {
+        name: pfpName,
+      })
+
+      user.pfp = pfpName
+    }
+
+    // Update other fields
+    user.username = payload.username
+    user.age = payload.age
+    user.email = payload.email
+
     await user.save()
-    return
-  }
 
-  /**
-   * Delete record
-   */
-  // async destroy({ params }: HttpContext) { }
+    return response.redirect().toRoute('profile.edit')
+  }
 }
+
+/**
+ * Delete record
+ */
+// async destroy({ params }: HttpContext) { }

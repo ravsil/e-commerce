@@ -11,6 +11,7 @@ export default class extends BaseSchema {
       table.string('email')
       table.string('password')
       table.integer('age')
+      table.string('pfp').nullable()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

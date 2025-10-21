@@ -7,6 +7,10 @@ import ImagesController from '#controllers/images_controller'
 router.get('/login', [UsersController, 'showLogin']).as('auth.login')
 router.post('/login', [UsersController, 'login'])
 router.post('/logout', [UsersController, 'logout']).as('auth.logout')
+router.get('/profile/edit', [UsersController, 'edit']).as('profile.edit')
+router.post('/profile/update', [UsersController, 'update']).as('profile.update')
+
+// Profile routes
 
 // Resource routes
 router.resource('products', ProductsController)

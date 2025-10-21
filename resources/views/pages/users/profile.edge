@@ -1,0 +1,82 @@
+@component('pages/layout/app')
+  @slot('main')
+    <div class="h-1/4 flex w-full justify-center">
+      <div class="place-self-center m-10 p-3 md:p-4 bg-white text-black
+      shadow-bottom shadow-zinc-600/50 w-9/11 md:w-8/11 md:max-w-9/11 lg:w-9/11 lg:max-w-6/11">
+        <h1 class="text-2xl font-bold mb-4">Editar Perfil</h1>
+        
+        @if(user.pfp)
+          <div class="mb-4">
+            <p class="font-bold mb-2">Foto</p>
+            <img class="w-24 h-24 rounded-full object-cover" src="{{ route('images.show', { id: user.pfp }) }}" alt="Profile Picture">
+          </div>
+        @endif
+
+        @form({ action: route('profile.update'), method: 'POST', enctype: 'multipart/form-data' })
+          <div class="flex flex-col gap-1 mb-4">
+            <label for="username" class="font-bold">
+              Nome do Usuário
+            </label>
+
+            @!input({
+              type: 'text',
+              name: 'username',
+              placeholder: 'nome ...',
+              value: user.username || ''
+            })
+          </div>
+
+          <div class="flex flex-col gap-1 mb-4">
+            <label for="age" class="font-bold">
+              Idade
+            </label>
+
+            @!input({
+              type: 'number',
+              name: 'age',
+              placeholder: 'idade ...',
+              value: user.age || ''
+            })
+          </div>
+
+          <div class="flex flex-col gap-1 mb-4">
+            <label for="email" class="font-bold">
+              E-mail
+            </label>
+
+            @!input({
+              type: 'email',
+              name: 'email',
+              placeholder: 'email ...',
+              value: user.email || ''
+            })
+          </div>
+
+          <div class="flex flex-col gap-1 mb-4">
+            <label for="pfp" class="font-bold">Foto de Perfil</label>
+            <div class="flex flex-col items-center justify-center w-full">
+              <label for="pfp-file" class="flex flex-col items-center w-full h-64 border-2 border-black 
+              border-dashed cursor-pointer bg-gray-100 hover:scale-101 md:justify-center transition duration-150 ease-in ">
+                  <div class="flex flex-col items-center justify-center p-6 text-black">
+                      <svg class="w-8 h-8 mb-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
+                          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
+                      </svg>
+                      <p class="mb-2 text-sm"><span class="font-semibold">Clique para enviar</span> ou arraste e solte</p>
+                      <p class="text-xs">SVG, PNG, JPG ou GIF</p>
+                  </div>
+                  <input id="pfp-file" type="file" name="pfp" class="flex inset-0 w-full h-full opacity-0 cursor-pointer" aria-label="Enviar arquivo"
+                    onchange="document.getElementById('pfp-file-name').textContent = this.files.length ? this.files[0].name : ''" />
+                  <p id="pfp-file-name" class="text-sm mt-2 text-black"></p>
+              </label>
+            </div>
+          </div>
+
+          <button type="submit" class="text-center px-3 py-3 bg-black place-self-center shadow-sm shadow-zinc-600/50 hover:shadow-md 
+          hover:scale-101 transition duration-150 ease-in text-white">
+            <div class="t-underline">Atualizar Perfil</div>
+          </button>
+        @end
+      </div>
+    </div>
+  @endslot
+@endcomponent

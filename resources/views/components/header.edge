@@ -8,9 +8,14 @@
   @include('components/search')
   <div class="flex flex-row justify-between gap-1 md:gap-4">
     @if(auth.isAuthenticated)
-      <span class="text-white">
-        Olá, <br> {{ auth.user.username }}
-      </span>
+      <div class="flex items-center gap-2">
+        @if(auth.user.pfp)
+          <img class="w-8 h-8 rounded-full object-cover" src="{{ route('images.show', { id: auth.user.pfp }) }}" alt="Profile">
+        @endif
+        <span class="text-white">
+          Olá, <br> {{ auth.user.username }}
+        </span>
+      </div>
       @include('components/user_dropdown')
     @else
       <a href="{{ route('auth.login') }}" class="text-white border p-1 md:p-2 px-2">Entrar</a>

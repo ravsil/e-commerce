@@ -11,8 +11,9 @@
     aria-orientation="vertical" aria-labelledby="customDropdownButton">
   
   <div class="py-1 text-white bg-black">
-    <button href="#" class="block px-4 py-2 text-sm cursor-pointer" id="menu-item-0">Meus pedidos</button>
-    <span class=" block px-4 py-2 text-sm cursor-pointer" id="menu-item-2">
+    <a href="{{ route('profile.edit') }}" class="block px-4 py-2 text-sm cursor-pointer hover:bg-gray-800" id="menu-item-0">Editar Perfil</a>
+    <button href="#" class="block px-4 py-2 text-sm cursor-pointer hover:bg-gray-800" id="menu-item-1">Meus pedidos</button>
+    <span class=" block px-4 py-2 text-sm cursor-pointer hover:bg-gray-800" id="menu-item-2">
       @form({ action: route('auth.logout'), method: 'POST', class: 'inline' })
         <button class="cursor-pointer">Sair</button>
       @end
