@@ -1,18 +1,26 @@
 @component('pages/layout/app')
   @slot('main')
-    <div>
-      <h1>Produto</h1>
-    </div>
-    <div>
-      <span>
-        {{ product.name }}
-      </span>
-      <span>
-        {{ product.price }}
-      </span>
-      <span>
-        {{ product.description }}
-      </span>
+    <div class="bg-white p-4 text-black shadow-bottom w-8/12 mx-auto">
+      <div class="flex gap-4">
+        <div>
+          @each(image in product.images)
+          <img src="{{ route('images.show', { id: image.name,}) }}">
+          @endeach
+        </div>
+        
+        <div class="flex-1">
+          <h2 class="text-xl font-bold">{{ product.name }}</h2>
+          <p><b>Preço:</b> R${{ product.price }}</p>
+          <p><b>Descrição:</b> {{ product.description }}</p>
+          
+          <div class="mt-4">
+            <a href="{{route('products.edit', {id: product.id})}}">Editar</a>
+          </div>
+          <div class="mt-4">
+            <a href="{{route('products.index')}}">Voltar</a>
+          </div>
+        </div>
+      </div>
     </div>
   @endslot
 @endcomponent

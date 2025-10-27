@@ -3,6 +3,9 @@ all: run
 run:
 	npm run dev
 
+init:
+	sudo docker start pgdb
+
 migrate:
 	node ace migration:run
 
