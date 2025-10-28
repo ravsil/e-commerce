@@ -15,8 +15,29 @@
   --shadow-bottom: 
     0 8px 12px -6px rgba(0, 0, 0, 0.18),
     0 4px 8px -6px rgba(0, 0, 0, 0.1);
-
+  --animate-slide-in: slide-in 0.912s ease-in-out forwards;
+  --animate-fade-in-start: fade-in-start 0.75s ease-out forwards;
+    @keyframes slide-in {
+      0% {
+        transform: translateX(-100%);
+      }
+      100% {
+        transform: translateX(0);
+      }
+      
+    }
+    @keyframes fade-in-start {
+    from {
+      opacity: 0;
+      transform: translateY(15px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }
+
 @layer utilities{
   .t-underline{
     @apply relative 
@@ -28,4 +49,11 @@
   .t-underline:hover::after{
     @apply w-full
   }
+}
+
+.torto {
+  clip-path: polygon(0 0, 100% 0, 55% 100%, 0% 100%);
+}
+.torto-wrap {
+  filter: drop-shadow(4px 1px 10px #000000);
 }

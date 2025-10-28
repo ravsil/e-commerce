@@ -1,34 +1,59 @@
-@component('pages/layout/app')
-  @slot('main')
-  <div>
-        @form({ action: route('auth.login'), method: 'POST' })
-          <div>
-            <label for="email">
-              Email
-            </label>
-            <input  
-              id="email" 
-              name="email" 
-              type="email" 
-              placeholder="seu@email.com"
-              required
-            >
-          </div>
+<!DOCTYPE html>
+<html lang="en">
+<head> 
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Document</title>
+</head>
+<body class="flex flex-col lg:flex-row h-screen bg-gray-200">
+  <div class="w-1/2 torto-wrap h-full animate-slide-in hidden lg:flex">
+    <div class="bg-black torto w-full h-full flex ">
+      <p class="text-white place-self-start lg:text-2xl xl:text-3xl 2xl:text-4xl border-2 border-white 
+      p-2 px-4 mt-36 lg:ml-7 xl:ml-20">BDV e-commerce<sup>©</sup></p>
+    </div>
+  </div>
 
-          <div class="mb-6">
-            <label for="password">
-              Senha
-            </label>
-            <input 
-              id="password" 
-              name="password" 
-              type="password" 
-              placeholder="********"
-              required
-            >
-          </div>
-            <button>Entrar</button>
-        @end
-        </div>
-    @endslot
-@endcomponent
+  <div class="h-2/4 flex w-full justify-center flex-col">
+    <div class="lg:hidden bg-black p-4 px-10 place-self-center mt-30 shadow-bottom shadow-zinc-600/50 w-6/11 m-4 
+    md:max-w-8/11 animate-fade-in-start">
+      <p class="text-white border-2 border-white place-self-center p-2 md:px-4 text-lg md:text-xl text-nowrap">BDV <br class="md:hidden">e-commerce<sup>©</sup></p>
+    </div>
+  <div class="place-self-center m-10 lg:mr-20 mt-15 p-3 md:p-4 bg-white text-black animate-fade-in-start
+  shadow-bottom shadow-zinc-600/50 w-9/11 md:w-8/11 md:max-w-9/11 lg:w-9/11 lg:max-w-6/11">
+    @form({ action: url, method: 'POST' })
+      <div class="flex flex-col">
+        <label for="email">
+          E-mail
+        </label>
+
+        @!input({
+          type: 'email',
+          name: 'email',
+          placeholder: 'email ...',
+          value: user?.email || ''
+        })
+      </div>
+      <div class="flex flex-col">
+        <label for="password">
+          Senha
+        </label>
+
+        @!input({
+          type: 'password',
+          name: 'password',
+          placeholder: 'senha ...',
+          value: ''
+        })
+      </div>
+      <button type="submit" class=" text-center px-3 py-3 bg-black place-self-center shadow-sm shadow-zinc-600/50 hover:shadow-md 
+      hover:scale-101 transition duration-150 ease-in text-white">
+        <div class="t-underline">Login</div>
+      </button>
+    @end
+  </div>
+  </div>
+</body>
+</html>
+
