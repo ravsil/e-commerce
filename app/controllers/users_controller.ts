@@ -24,7 +24,7 @@ export default class UsersController {
       const user = await User.verifyCredentials(email, password)
       await auth.use('web').login(user)
 
-      return response.redirect().toRoute('products.index')
+      return response.redirect().toRoute('/')
     } catch {
       session.flash('error', 'Email ou senha inválidos')
       return response.redirect().back()
