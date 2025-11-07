@@ -1,31 +1,36 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  @vite(['resources/css/app.css', 'resources/js/app.js'])
-  <title>Document</title>
-</head>
-<body class="bg-gray-200 h-screen text-black">
-  @include('components/header')
-  <div class="flex gap-3 place-items-center h-2/4 justify-center">
-    <div class="bg-white text-black flex flex-col gap-4 p-4 shadow-bottom md:w-1/4 lg:w-1/5">
-      <a href='{{ route("profile.edit") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
-      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
-      transition duration-150 ease-in">Editar Perfil</a>
-      <a href='{{ route("users.create") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
-      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
-      transition duration-150 ease-in">Cadastrar Usuário</a>
-      <a href='{{ route("products.create") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
-      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
-      transition duration-150 ease-in">Cadastrar Produto</a>
-      <a href='{{ route("users.index") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
-      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
-      transition duration-150 ease-in">Listar Usuários</a>
-      <a href='{{ route("products.index") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
-      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
-      transition duration-150 ease-in">Listar Produtos</a>
-    </div>
-  </div>
-</body>
-</html>
+@component('pages/layout/app')
+	@slot('main')
+		<div class="w-full max-w-7xl mx-auto p-4">
+			<div class="flex flex-col gap-4">
+				<h1 class="text-2xl md:text-4xl place-self-center">Produtos</h1>
+
+				@if(!products || products.length == 0)
+					<div class="bg-white p-6 shadow-bottom text-black text-center">
+						Nenhum produto encontrado no momento.
+					</div>
+				@else
+					<div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
+						@each(product in products)
+							@let(firstImage = product.images[0])
+							<div class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black">
+								<div class="w-full h-44 bg-gray-100 flex items-center justify-center overflow-hidden">
+									@if(firstImage)
+										<img class="w-full h-full object-cover" src="{{ route('images.show', { id: firstImage.name }) }}" alt="{{ product.name }}">
+									@else
+										<div class="text-gray-400">Sem imagem</div>
+									@endif
+								</div>
+
+								<div class="p-3 flex flex-col gap-2">
+									<h2 class="text-sm md:text-base font-semibold truncate">{{ product.name }}</h2>
+									<div class="text-sm text-gray-700">R${{ product.price }}</div>
+									<p class="text-xs text-gray-600 line-clamp-2">{{ product.description }}</p>
+								</div>
+							</div>
+						@endeach
+					</div>
+				@endif
+			</div>
+		</div>
+	@endslot
+@endcomponent

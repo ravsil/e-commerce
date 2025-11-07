@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  @vite(['resources/css/app.css', 'resources/js/app.js'])
+  <title>Document</title>
+</head>
+<body class="bg-gray-200 h-screen text-black">
+  @include('components/header')
+  <div class="flex gap-3 place-items-center h-2/4 justify-center">
+    <div class="bg-white text-black flex flex-col gap-4 p-4 shadow-bottom md:w-1/4 lg:w-1/5">
+      <a href='{{ route("profile.edit") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
+      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
+      transition duration-150 ease-in">Editar Perfil</a>
+      <a href='{{ route("users.create") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
+      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
+      transition duration-150 ease-in">Cadastrar Usuário</a>
+      <a href='{{ route("products.create") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
+      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
+      transition duration-150 ease-in">Cadastrar Produto</a>
+      <a href='{{ route("users.index") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
+      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
+      transition duration-150 ease-in">Listar Usuários</a>
+      <a href='{{ route("products.index") }}' class="bg-white text-black text-shadow-sm text-shadow-zinc-900/10 
+      text-center border border-black p-2 shadow-sm shadow-zinc-600/50 md:text-lg hover:shadow-md hover:scale-101 
+      transition duration-150 ease-in">Listar Produtos</a>
+    </div>
+  </div>
+</body>
+</html>
