@@ -16,14 +16,14 @@
   </div>
 
   <div class="h-2/4 flex w-full justify-center flex-col">
-    <div class="lg:hidden bg-black p-4 px-10 place-self-center mt-30 shadow-bottom shadow-zinc-600/50 w-6/11 m-4 
-    md:max-w-8/11 animate-fade-in-start">
-      <p class="text-white border-2 border-white place-self-center p-2 md:px-4 text-lg md:text-xl text-nowrap">BDV <br class="md:hidden">e-commerce<sup>©</sup></p>
+    <div class="lg:hidden bg-black p-4 px-10 place-self-center mt-50 shadow-bottom shadow-zinc-600/50 w-6/11 md:w-5/11 m-4 
+    md:max-w-6/11 animate-fade-in-start">
+      <p class="text-white border-2 border-white place-self-center p-2 md:px-4 md:text-xl text-nowrap">BDV <br class="md:hidden">e-commerce<sup>©</sup></p>
     </div>
-  <div class="place-self-center m-10 lg:mr-20 mt-15 p-3 md:p-4 bg-white text-black animate-fade-in-start
+  <div class="place-self-center m-10 lg:mr-20 lg:mt-30 p-3 md:p-4 bg-white text-black animate-fade-in-start
   shadow-bottom shadow-zinc-600/50 w-9/11 md:w-8/11 md:max-w-9/11 lg:w-9/11 lg:max-w-6/11">
     @form({ action: url, method: 'POST' })
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-1">
         <label for="email">
           E-mail
         </label>
@@ -35,7 +35,7 @@
           value: user?.email || ''
         })
       </div>
-      <div class="flex flex-col">
+      <div class="flex flex-col gap-1">
         <label for="password">
           Senha
         </label>
@@ -51,6 +51,12 @@
       hover:scale-101 transition duration-150 ease-in text-white">
         <div class="t-underline">Login</div>
       </button>
+      <p class="place-self-center">
+        Não possui uma conta? 
+        <a href="{{ route('users.create') }}" class="text-blue-600 hover:underline">
+          Registre-se aqui
+        </a>
+      </p>
     @end
   </div>
   </div>
