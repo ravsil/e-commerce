@@ -51,6 +51,9 @@
       hover:scale-101 transition duration-150 ease-in text-white">
         <div class="t-underline">Login</div>
       </button>
+      @if(flashMessages.get('error'))
+        <p class="place-self-center text-red-600">{{ flashMessages.get('error') }}</p>
+      @endif
       <p class="place-self-center">
         Não possui uma conta? 
         <a href="{{ route('users.create') }}" class="text-blue-600 hover:underline">
