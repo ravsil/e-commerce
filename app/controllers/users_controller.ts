@@ -64,7 +64,7 @@ export default class UsersController {
     const data = await request.validateUsing(createUserValidator)
     await User.create(data)
 
-    return response.redirect().toRoute('users.index')
+    return response.redirect().toRoute('/')
   }
 
   /**
