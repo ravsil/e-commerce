@@ -32,6 +32,15 @@
             })
           </div>
           <div class="flex flex-col gap-1">
+            <label for="stock" class="font-bold">Estoque</label>
+            @!input({
+              type: 'number',
+              name: 'stock',
+              placeholder: 'estoque ...',
+              value: product?.stock || ''
+            })
+          </div>
+          <div class="flex flex-col gap-1">
             <label for="image" class="font-bold">Imagem</label>
             @include('components/image_input')
           </div>

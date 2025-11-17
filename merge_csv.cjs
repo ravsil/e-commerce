@@ -5,10 +5,10 @@ const { parse } = require('csv-parse/sync');
 const seedDir = path.join(__dirname, 'seedContent');
 const outputFile = path.join(__dirname, 'seedContent', 'products.json');
 
-// Headers para simular um navegador real
+// Headers para simular um navegador real e evitar erro 403 da Zara
 const REQUEST_HEADERS = {
   'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-  'Referer': 'https://www.zara.com/', // <--- O MAIS IMPORTANTE: Finge que estamos no site deles
+  'Referer': 'https://www.zara.com/',
   'Accept': 'image/avif,image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8',
   'Accept-Language': 'en-US,en;q=0.9',
   'Sec-Fetch-Dest': 'image',
@@ -30,15 +30,14 @@ function getAllCsvFiles(dirPath, arrayOfFiles) {
   return arrayOfFiles;
 }
 
-// Função isolada para validar URL com timeout e headers
+// Função para validar a URL da imagem
 async function checkUrl(url) {
   try {
-    // AbortController para cancelar se demorar mais de 5 segundos
     const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 5000);
+    const timeoutId = setTimeout(() => controller.abort(), 5000); // 5 segundos timeout
 
     const res = await fetch(url, {
-      method: 'GET', // Zara as vezes bloqueia HEAD, GET é mais garantido
+      method: 'GET',
       headers: REQUEST_HEADERS,
       signal: controller.signal
     });
@@ -50,6 +49,24 @@ async function checkUrl(url) {
   }
 }
 
+// --- NOVA FUNÇÃO: GERA ESTOQUE BASEADO NO PREÇO ---
+function generateStock(price) {
+  let min, max;
+
+  if (price < 100) {
+    // Produto Barato: Muito estoque (50 a 150)
+    min = 50; max = 150;
+  } else if (price < 300) {
+    // Produto Médio: Estoque regular (20 a 60)
+    min = 20; max = 60;
+  } else {
+    // Produto Caro: Pouco estoque (2 a 15)
+    min = 2; max = 15;
+  }
+
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 (async () => {
   try {
     const allCsvs = getAllCsvFiles(seedDir);
@@ -57,7 +74,6 @@ async function checkUrl(url) {
 
     let allProducts = [];
 
-    // Processa arquivo por arquivo sequencialmente para não travar a memória
     for (const file of allCsvs) {
       console.log(`Processando: ${path.basename(file)}...`);
 
@@ -69,19 +85,20 @@ async function checkUrl(url) {
         trim: true
       });
 
-      // Lote de processamento (Batch) para não fazer 10 mil requests de uma vez e tomar ban
       const batchSize = 10;
       const processedRecords = [];
 
       for (let i = 0; i < records.length; i += batchSize) {
         const batch = records.slice(i, i + batchSize);
 
-        // Processa o lote em paralelo
         const promises = batch.map(async (r) => {
           let priceStr = r.price || r.Price || '0';
           let rawPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
           if (isNaN(rawPrice)) rawPrice = 0;
+
           let finalPrice = Math.floor((rawPrice / 16.74) * 100) / 100;
+
+          let stockQuantity = generateStock(finalPrice);
 
           let rawImage = r.product_images || r.images || '';
           const urls = rawImage.match(/https?:\/\/[^\s'"]+/g) || [];
@@ -92,7 +109,6 @@ async function checkUrl(url) {
             const isValid = await checkUrl(url);
             if (isValid) {
               validImages.push(url);
-              // Se achou pelo menos uma valida, já serve (opcional: break se quiser só 1)
             }
           }
 
@@ -101,6 +117,7 @@ async function checkUrl(url) {
               name: r.product_name || r.name || r.Name,
               description: r.details || r.description || r.Description || '',
               price: finalPrice,
+              stock: stockQuantity,
               images: validImages
             };
           }

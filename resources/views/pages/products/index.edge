@@ -9,9 +9,14 @@
           <span class="flex flex-row justify-between">
             <p class="truncate w-full max-w-xs text-sm md:text-base"><b>Nome:</b> {{ product.name }}<br> <b>Preço:</b> R${{ product.price }}<br> <b>Descrição:</b> {{ product.description }}</p>
             <span class="hidden md:block">
-              @each(image in product.images)
-              <img class="w-18 h-18" src="{{ route('images.show', { id: image.name,}) }}">
-              @endeach
+              @let(firstImage = product.images[0])
+              @if(firstImage && firstImage.url)
+                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="{{ firstImage.url }}" alt="{{ product.name }}">
+              @elseif(firstImage && firstImage.name)
+                <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="{{ route('images.show', { id: firstImage.name }) }}" alt="{{ product.name }}">
+              @else
+                <div class="text-gray-400">Sem imagem</div>
+              @endif
             </span>
           </span>
         </a>

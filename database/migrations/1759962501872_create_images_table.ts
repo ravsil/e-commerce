@@ -7,7 +7,7 @@ export default class extends BaseSchema {
     this.schema.createTable(this.tableName, (table) => {
       table.increments('id')
 
-      table.string('name')
+      table.string('name').nullable()
       table
         .integer('product_id')
         .unsigned()
@@ -15,7 +15,6 @@ export default class extends BaseSchema {
         .inTable('products')
         .onDelete('CASCADE')
       table.text('url').nullable() 
-      table.string('name').nullable().alter()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

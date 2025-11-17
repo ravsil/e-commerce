@@ -61,6 +61,7 @@ export default class ProductsController {
       name: payload.name,
       description: payload.description,
       price: payload.price,
+      stock: payload.stock,
     })
 
     const image = new Image()

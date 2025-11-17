@@ -17,6 +17,9 @@ export default class Product extends BaseModel {
   @column()
   declare description: string
 
+  @column()
+  declare stock: number
+
   @hasMany(() => Image)
   declare images: HasMany<typeof Image>
 

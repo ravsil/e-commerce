@@ -2,6 +2,7 @@ import router from '@adonisjs/core/services/router'
 import ProductsController from '../app/controllers/products_controller.js'
 import UsersController from '#controllers/users_controller'
 import ImagesController from '#controllers/images_controller'
+import StocksController from '#controllers/stocks_controller'
 import Product from '#models/product'
 import { isAdmin } from '#abilities/main'
 
@@ -16,7 +17,11 @@ router.post('/profile/update', [UsersController, 'update']).as('profile.update')
 router.resource('products', ProductsController)
 router.resource('users', UsersController)
 router.resource('images', ImagesController)
-
+router.resource('stocks', StocksController)
+router.put('/products/:id/add-stock/:quantity', [StocksController, 'addStock'])
+  .as('stocks.addStock')
+router.put('/products/:id/reduce-stock/:quantity', [StocksController, 'reduceStock'])
+.as('stocks.reduceStock')
 // Admin dashboard route
 router.get('/admin', async ({ view, response, bouncer }) => {
   if(!(await bouncer.allows(isAdmin))) {

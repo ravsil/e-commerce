@@ -20,6 +20,7 @@ export default class extends BaseSeeder {
         name: item.name,
         description: item.description,
         price: item.price,
+        stock: item.stock,
       })
 
       if (item.images && item.images.length > 0) {
