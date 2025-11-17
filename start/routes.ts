@@ -26,11 +26,16 @@ router.get('/admin', async ({ view, response, bouncer }) => {
 }).as('admin')
 
 // Home route
-router.get('/', async ({ view }) => {
-  const products = await Product.all()
-  for (const product of products) {
-      await product.load('images')
-    }
-  console.log(products, "products in home route")
+router.get('/', async ({ view, request }) => {
+  const page = request.input('page', 1)
+  const limit = 12
+
+  const products = await Product.query()
+    .preload('images')
+    .orderBy('id', 'desc')
+    .paginate(page, limit)
+
+  products.baseUrl('/')
+
   return view.render('pages/home', { products })
 }).as('home')

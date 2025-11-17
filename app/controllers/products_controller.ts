@@ -9,14 +9,14 @@ import Image from '#models/image'
 import { createProductValidator } from '#validators/product'
 
 export default class ProductsController {
-  public async index({ view, bouncer, response }: HttpContext) {
-    if(!(await bouncer.allows(isAdmin))) {
-      return response.status(403).send('Not authorized')
-    }
-    const products = await Product.all()
-    for (const product of products) {
-      await product.load('images')
-    }
+    public async index({ view, bouncer, response }: HttpContext) {
+      if(!(await bouncer.allows(isAdmin))) {
+        return response.status(403).send('Not authorized')
+      }
+      const products = await Product.all()
+      for (const product of products) {
+        await product.load('images')
+      }
     
     return view.render('pages/products/index', { products })
   }
@@ -25,6 +25,12 @@ export default class ProductsController {
     const product = await Product.findOrFail(params.id)
     const image = await product.load('images')
     return view.render('pages/products/show', { product, image })
+  }
+
+  public async userShow({ params, view }: HttpContext) {
+    const product = await Product.findOrFail(params.id)
+    const image = await product.load('images')
+    return view.render('pages/products/userShow', { product, image })
   }
 
   public async create({ view, bouncer, response}: HttpContext) {

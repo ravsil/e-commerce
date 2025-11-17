@@ -3,11 +3,23 @@
     <div class="bg-white p-4 text-black shadow-bottom w-8/12 mx-auto">
       <div class="flex gap-4">
         <div>
+         <div class="flex gap-4 overflow-x-auto">
           @each(image in product.images)
-          <img src="{{ route('images.show', { id: image.name,}) }}">
+            <div class="w-32 h-32 flex-shrink-0 border rounded overflow-hidden">
+              {{-- LÓGICA HÍBRIDA --}}
+              @if(image.url)
+                {{-- Imagem Externa (Zara) --}}
+                <img src="{{ image.url }}" class="w-full h-full object-cover" alt="Product Image">
+              
+              @elseif(image.name)
+                {{-- Imagem Local (Seu Upload) --}}
+                <img src="{{ route('images.show', { id: image.name }) }}" class="w-full h-full object-cover" alt="Product Image">
+              
+              @endif
+
+            </div>
           @endeach
         </div>
-        
         <div class="flex-1">
           <h2 class="text-xl font-bold">{{ product.name }}</h2>
           <p><b>Preço:</b> R${{ product.price }}</p>

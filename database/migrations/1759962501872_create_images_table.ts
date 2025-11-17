@@ -14,7 +14,8 @@ export default class extends BaseSchema {
         .references('id')
         .inTable('products')
         .onDelete('CASCADE')
-
+      table.text('url').nullable() 
+      table.string('name').nullable().alter()
       table.timestamp('created_at')
       table.timestamp('updated_at')
     })

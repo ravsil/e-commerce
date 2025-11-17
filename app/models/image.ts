@@ -6,7 +6,10 @@ export default class Image extends BaseModel {
   declare id: number
 
   @column()
-  declare name: string
+  declare name: string | null
+
+  @column()
+  declare url: string | null
 
   @column()
   declare productId: number
