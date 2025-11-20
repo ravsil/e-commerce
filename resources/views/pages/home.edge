@@ -11,8 +11,9 @@
           <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
             @each(product in products)
             @let(firstImage = product.images[0])
-            <a href="{{ route('products.show', { id: product.id }) }}" class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black group">
+            <div class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black group">
               <div class="w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
+                <a href="{{ route('products.show', { id: product.id }) }}">
                 @if(firstImage && firstImage.url)
                   <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="{{ firstImage.url }}" alt="{{ product.name }}">
                 @elseif(firstImage && firstImage.name)
@@ -20,6 +21,7 @@
                 @else
                   <div class="text-gray-400">Sem imagem</div>
                 @endif
+                </a>
               </div>
 
               <div class="p-3 flex flex-col gap-2">
@@ -27,7 +29,7 @@
 
                 <div class="flex items-center justify-between">
                   <div class="text-lg font-bold text-gray-900">R$ {{ product.price }}</div>
-
+                  @if(auth.isAuthenticated)
                   @form({ action: route('cart.add'), method: 'POST' })
                     <input type="hidden" name="product_id" value="{{ product.id }}" />
                     <input type="number" name="quantity" value="1" min="1" class="w-20 inline-block" hidden/>
@@ -37,11 +39,22 @@
                       </svg>
                     </button>
                   @end
+                  @else
+                    <div class="mt-4">
+                      <input type="hidden" name="product_id" value="{{ product.id }}" />
+                      <input type="number" name="quantity" id="quantity_{{ product.id }}" value="1" min="1" class="w-20 inline-block" hidden/>
+                      <button id="add_to_cart_guest_{{ product.id }}" class="p-1" onclick="addToCartGuest({{ product.id }})">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6-8M7 13l-2 9h14l-2-9M10 21a1 1 0 110-2 1 1 0 010 2zm8 0a1 1 0 110-2 1 1 0 010 2z"/>
+                        </svg>
+                      </button>
+                    </div>
+                  @endif
                 </div>
 
                 <p class="text-xs text-gray-500 line-clamp-2">{{ product.description }}</p>
               </div>
-            </a>
+            </div>
           @endeach
           </div>
 					@!component('components/paginator', { paginator: products })
@@ -52,5 +65,28 @@
         @endif
       </div>
     </div>
+    <script>
+    function addToCartGuest(productId) {
+        const quantityInput = document.getElementById(`quantity_${productId}`);
+        const quantity = parseInt(quantityInput.value);
+
+        let cartItems = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [];
+        let cartTotal = localStorage.getItem('cartTotal') ? parseFloat(localStorage.getItem('cartTotal')) : 0;
+
+        const existingItemIndex = cartItems.findIndex(item => item.id === productId);
+        if (existingItemIndex !== -1) {
+            cartItems[existingItemIndex].quantity += quantity;
+        } else {
+            cartItems.push({
+                id: productId,
+                quantity: quantity
+            });
+        }
+
+
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        localStorage.setItem('cartTotal', cartTotal.toString());
+    }
+    </script>
   @endslot
 @endcomponent

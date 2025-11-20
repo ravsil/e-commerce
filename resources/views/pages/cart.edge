@@ -4,9 +4,24 @@
   @slot('main')
     <div class="bg-white p-4 text-black shadow-bottom w-8/12 mx-auto">
       <h2 class="text-xl font-bold mb-4">Seu Carrinho</h2>
-
-      @if(itens.length === 0)
-        <div>Seu carrinho está vazio.</div>
+      @if(total == -1)
+        <table class="w-full table-auto">
+          <thead id="cart-head">
+            <tr>
+              <th>Produto</th>
+              <th>Preço</th>
+              <th>Quantidade</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="cart-body"></tbody>
+        </table>
+        <div class="text-right mt-4">
+          <strong id="total">Total: R${{ Number(total).toFixed(2) }}</strong>
+        </div>
+      @elseif(itens.length === 0)
+        <div class="py-4 text-center">Seu carrinho está vazio.</div>
       @else
         <table class="w-full table-auto">
           <thead>
@@ -51,9 +66,76 @@
         </table>
 
         <div class="text-right mt-4">
-          <strong>Total: R${{ Number(total).toFixed(2) }}</strong>
+          <strong id="total">Total: R${{ Number(total).toFixed(2) }}</strong>
         </div>
       @endif
+    <script>
+      document.addEventListener('DOMContentLoaded', async () => {
+        const totalFromServer = Number('{{ total }}');
+
+        if (totalFromServer === -1) {
+          const itens = JSON.parse(localStorage.getItem('cartItems') || '[]');
+          const totalLS = Number(localStorage.getItem('cartTotal') || 0);
+
+          const tbody = document.querySelector('#cart-body');
+          const totalEl = document.querySelector('#total');
+
+          if (itens.length === 0) {
+            tbody.innerHTML = `
+              <tr>
+                <td colspan="5" class="py-4 text-center">Seu carrinho está vazio.</td>
+              </tr>
+            `;
+            document.querySelector('#cart-head').style.display = 'none';
+            totalEl.textContent = '';
+            return;
+          }
+
+          const fetchedProducts = await Promise.all(
+            itens.map(item =>
+              fetch(`/api/products/${item.id}`)
+                .then(res => res.json())
+                .catch(() => null)
+            )
+          );
+          for (let i = 0; i < fetchedProducts.length; i++) {
+              fetchedProducts[i].quantity = itens[i].quantity;
+          }
+
+          // updating doesn't work yet, will fix when definitive HTML comes
+          tbody.innerHTML = fetchedProducts.map(item => {
+          const img = item?.images?.[0];
+          const imgTag = img?.url
+            ? `<img src="${img.url}" class="inline-block w-16 h-16 object-cover mr-2" />`
+            : img?.name
+            ? `<img src="/images/${img.name}" class="inline-block w-16 h-16 object-cover mr-2" />`
+            : '';
+
+          return `
+            <tr class="border-t">
+              <td class="py-2">
+                ${imgTag}
+                <span>${item?.name || 'Produto removido'}</span>
+              </td>
+
+              <td>R$${item?.price ?? '0.00'}</td>
+
+              <td>
+                <input type="number" value="${item.quantity}" class="w-20" />
+              </td>
+
+              <td>R$${item ? (item.price * item.quantity).toFixed(2) : '0.00'}</td>
+
+              <td></td>
+            </tr>
+          `;
+        }).join('');
+
+        totalEl.textContent = 'Total: R$' + totalLS.toFixed(2);
+
+        }
+      });
+    </script>
     </div>
   @endslot
 @endcomponent

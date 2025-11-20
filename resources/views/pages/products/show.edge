@@ -1,5 +1,6 @@
 @component('pages/layout/app')
   @slot('main')
+    @vite(['resources/js/cart/guestAddToCart.js'])
     <div class="bg-white p-4 text-black shadow-bottom w-8/12 mx-auto">
       <div class="flex gap-4">
         <div>
@@ -33,6 +34,11 @@
                 <button type="submit" class="px-3 py-2 bg-green-600 text-white rounded">Adicionar ao Carrinho</button>
               @end
             </div>
+          @else
+            <div class="mt-4">
+              <input type="number" name="quantity" id="quantity_{{ product.id }}" value="1" min="1" class="w-20 inline-block" />
+              <button id="add_to_cart_guest_{{ product.id }}" class="px-3 py-2 bg-green-600 text-white rounded" onclick="addToCartGuest({{ product.id }})">Adicionar ao Carrinho</button>
+            </div>
           @endif
           <div class="mt-4">
             @form({ action: route('stocks.addStock', { id: product.id, quantity: 1 }, { qs: { _method: 'PUT' } }), method: 'POST', enctype: 'multipart/form-data' })
@@ -49,5 +55,31 @@
         </div>
       </div>
     </div>
+    <script>
+    function addToCartGuest(productId) {
+        const quantityInput = document.getElementById(`quantity_${productId}`);
+        const quantity = parseInt(quantityInput.value);
+
+        let cartItems = localStorage.getItem('cartItems') ? JSON.parse(localStorage.getItem('cartItems')) : [];
+        let cartTotal = localStorage.getItem('cartTotal') ? parseFloat(localStorage.getItem('cartTotal')) : 0;
+
+        const existingItemIndex = cartItems.findIndex(item => item.id === productId);
+        if (existingItemIndex !== -1) {
+            cartItems[existingItemIndex].quantity += quantity;
+        } else {
+            cartItems.push({
+                id: productId,
+                quantity: quantity
+            });
+        }
+
+        cartTotal += productPrice * quantity;
+
+        localStorage.setItem('cartItems', JSON.stringify(cartItems));
+        localStorage.setItem('cartTotal', cartTotal.toString());
+
+        alert('Produto adicionado ao carrinho!');
+    }
+    </script>
   @endslot
 @endcomponent

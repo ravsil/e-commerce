@@ -6,6 +6,9 @@ import Product from '#models/product'
 export default class CartsController {
     public async index({ view, auth }: HttpContext) {
         const user = auth.user!
+        if (!user) {
+            return view.render('pages/cart', { itens: [], total: -1 })
+        }
 
         const itens = await Cart.query()
             .where('user_id', user.id)

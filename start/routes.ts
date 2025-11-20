@@ -44,9 +44,8 @@ router.get('/', async ({ view, request }) => {
   return view.render('pages/home', { products })
 }).as('home')
 
-// router.get('/cart', [CartsController, 'index']).as('cart.index')
-// Cart routes (only for authenticated users)
 router.get('/cart', [CartsController, 'index']).as('cart.index')
 router.post('/cart/add', [CartsController, 'add']).as('cart.add')
 router.put('/cart/:id', [CartsController, 'update']).as('cart.update')
 router.delete('/cart/:id', [CartsController, 'remove']).as('cart.remove')
+router.get('/api/products/:id', [ProductsController, 'get']).as('api.products.get')
