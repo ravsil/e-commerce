@@ -1,0 +1,59 @@
+{{--  chatgpt's design  --}}
+{{--  TODO: remake css  --}}
+@component('pages/layout/app')
+  @slot('main')
+    <div class="bg-white p-4 text-black shadow-bottom w-8/12 mx-auto">
+      <h2 class="text-xl font-bold mb-4">Seu Carrinho</h2>
+
+      @if(itens.length === 0)
+        <div>Seu carrinho está vazio.</div>
+      @else
+        <table class="w-full table-auto">
+          <thead>
+            <tr>
+              <th>Produto</th>
+              <th>Preço</th>
+              <th>Quantidade</th>
+              <th>Subtotal</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @each(item in itens)
+              <tr class="border-t">
+                <td class="py-2">
+                  @if(item.product && item.product.images && item.product.images[0])
+                    @let(img = item.product.images[0])
+                    @if(img.url)
+                      <img src="{{ img.url }}" class="inline-block w-16 h-16 object-cover mr-2" />
+                    @elseif(img.name)
+                      <img src="{{ route('images.show', { id: img.name }) }}" class="inline-block w-16 h-16 object-cover mr-2" />
+                    @endif
+                  @endif
+                  <span>{{ item.product ? item.product.name : 'Produto removido' }}</span>
+                </td>
+                <td>R${{ item.product ? item.product.price : '0.00' }}</td>
+                <td>
+                  @form({ action: route('cart.update', { id: item.id }, { qs: { _method: 'PUT' } }), method: 'POST' })
+                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-20" onchange="this.form.submit()" />
+                    <button type="submit" class="ml-2 px-2 py-1 bg-blue-600 text-white rounded">Confirmar</button>
+                  @end
+                </td>
+                <td>R${{ item.product ? (item.product.price * item.quantity).toFixed(2) : '0.00' }}</td>
+                <td>
+                  @form({ action: route('cart.remove', { id: item.id }, { qs: { _method: 'DELETE' } }), method: 'POST' })
+                    <button type="submit" class="px-2 py-1 bg-red-600 text-white rounded">Remover</button>
+                  @end
+                </td>
+              </tr>
+            @endeach
+          </tbody>
+        </table>
+
+        <div class="text-right mt-4">
+          <strong>Total: R${{ Number(total).toFixed(2) }}</strong>
+        </div>
+      @endif
+    </div>
+  @endslot
+@endcomponent

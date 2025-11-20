@@ -3,6 +3,7 @@ import { BaseModel, column, hasMany } from '@adonisjs/lucid/orm'
 import type { HasMany } from '@adonisjs/lucid/types/relations'
 
 import Image from '#models/image'
+import Cart from '#models/cart'
 
 export default class Product extends BaseModel {
   @column({ isPrimary: true })
@@ -23,6 +24,8 @@ export default class Product extends BaseModel {
   @hasMany(() => Image)
   declare images: HasMany<typeof Image>
 
+  @hasMany(() => Cart)
+  declare carts: HasMany<typeof Cart>
 
   @column.dateTime({ autoCreate: true })
   declare createdAt: DateTime

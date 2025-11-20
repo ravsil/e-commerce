@@ -25,6 +25,15 @@
           <div class="mt-4">
             <a href="{{route('products.index')}}">Voltar</a>
           </div>
+          @if(auth.isAuthenticated)
+            <div class="mt-4">
+              @form({ action: route('cart.add'), method: 'POST' })
+                <input type="hidden" name="product_id" value="{{ product.id }}" />
+                <input type="number" name="quantity" value="1" min="1" class="w-20 inline-block" />
+                <button type="submit" class="px-3 py-2 bg-green-600 text-white rounded">Adicionar ao Carrinho</button>
+              @end
+            </div>
+          @endif
           <div class="mt-4">
             @form({ action: route('stocks.addStock', { id: product.id, quantity: 1 }, { qs: { _method: 'PUT' } }), method: 'POST', enctype: 'multipart/form-data' })
               <button type="submit" class="px-3 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition">
