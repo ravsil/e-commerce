@@ -34,9 +34,7 @@
                     <input type="hidden" name="product_id" value="{{ product.id }}" />
                     <input type="number" name="quantity" value="1" min="1" class="w-20 inline-block" hidden/>
                     <button type="submit" class="p-1">
-                      <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6-8M7 13l-2 9h14l-2-9M10 21a1 1 0 110-2 1 1 0 010 2zm8 0a1 1 0 110-2 1 1 0 010 2z"/>
-                      </svg>
+                      @include('components/cartsvg')
                     </button>
                   @end
                   @else
@@ -44,9 +42,7 @@
                       <input type="hidden" name="product_id" value="{{ product.id }}" />
                       <input type="number" name="quantity" id="quantity_{{ product.id }}" value="1" min="1" class="w-20 inline-block" hidden/>
                       <button id="add_to_cart_guest_{{ product.id }}" class="p-1" onclick="addToCartGuest({{ product.id }})">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13l-1.6-8M7 13l-2 9h14l-2-9M10 21a1 1 0 110-2 1 1 0 010 2zm8 0a1 1 0 110-2 1 1 0 010 2z"/>
-                        </svg>
+                        @include('components/cartsvg')
                       </button>
                     </div>
                   @endif
