@@ -49,18 +49,14 @@ async function checkUrl(url) {
   }
 }
 
-// --- NOVA FUNÇÃO: GERA ESTOQUE BASEADO NO PREÇO ---
 function generateStock(price) {
   let min, max;
 
   if (price < 100) {
-    // Produto Barato: Muito estoque (50 a 150)
     min = 50; max = 150;
   } else if (price < 300) {
-    // Produto Médio: Estoque regular (20 a 60)
     min = 20; max = 60;
   } else {
-    // Produto Caro: Pouco estoque (2 a 15)
     min = 2; max = 15;
   }
 
@@ -70,7 +66,7 @@ function generateStock(price) {
 (async () => {
   try {
     const allCsvs = getAllCsvFiles(seedDir);
-    console.log(`📂 Encontrados ${allCsvs.length} arquivos CSV.`);
+    console.log(`Encontrados ${allCsvs.length} arquivos CSV.`);
 
     let allProducts = [];
 
@@ -92,16 +88,24 @@ function generateStock(price) {
         const batch = records.slice(i, i + batchSize);
 
         const promises = batch.map(async (r) => {
-          let priceStr = r.price || r.Price || '0';
-          let rawPrice = parseFloat(priceStr.replace(/[^0-9.]/g, ''));
+          const nr = {};
+          Object.keys(r || {}).forEach((k) => {
+            const nk = String(k).toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, '');
+            nr[nk] = r[k];
+          });
+          r = nr;
+
+          let priceStr = r.price || r.price || '0';
+          let rawPrice = parseFloat(String(priceStr).replace(/[^0-9.]/g, ''));
           if (isNaN(rawPrice)) rawPrice = 0;
 
+          // rupias indianas para real
           let finalPrice = Math.floor((rawPrice / 16.74) * 100) / 100;
 
           let stockQuantity = generateStock(finalPrice);
 
-          let rawImage = r.product_images || r.images || '';
-          const urls = rawImage.match(/https?:\/\/[^\s'"]+/g) || [];
+          let rawImage = r.product_images || r.product_image || r.images || r.image || '';
+          const urls = String(rawImage).match(/https?:\/\/[^\s'\"]+/g) || [];
 
           const validImages = [];
 
@@ -112,9 +116,9 @@ function generateStock(price) {
             }
           }
 
-          if (r.product_name && validImages.length > 0) {
+          if ((r.product_name || r.productname || r.name || r.product) && validImages.length > 0) {
             return {
-              name: r.product_name || r.name || r.Name,
+              name: r.product_name || r.productname || r.name || r.Product_Name || r.Product || '',
               description: r.details || r.description || r.Description || '',
               price: finalPrice,
               stock: stockQuantity,
@@ -128,11 +132,13 @@ function generateStock(price) {
         processedRecords.push(...results.filter(p => p !== null));
       }
 
+      console.log(`  └> ${processedRecords.length} produtos válidos processados.`);
       allProducts = allProducts.concat(processedRecords);
     }
 
     fs.writeFileSync(outputFile, JSON.stringify(allProducts, null, 2));
-    console.log(`✅ SUCESSO! products.json gerado com ${allProducts.length} produtos.`);
+    console.log(`SUCESSO! products.json gerado com ${allProducts.length} produtos.`);
+    return;
 
   } catch (error) {
     console.error("Erro Fatal:", error);
