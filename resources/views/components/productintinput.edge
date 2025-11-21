@@ -1,0 +1,15 @@
+<div class="flex items-center border overflow-hidden">
+  <button type="button" aria-label="Diminuir quantidade" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-lg" onclick="changeQty({{ product.id }}, -1)">-</button>
+  <input id="quantity_{{ product.id }}" type="number" name="quantity" value="1" min="1" class="w-20 text-center px-2 py-1 outline-none appearance-none [&::-webkit-outer-spin-button]:appearance-none [&::-webkit-inner-spin-button]:appearance-none 
+    [&::-webkit-outer-spin-button]:m-0 [&::-webkit-inner-spin-button]:m-0" />
+  <button type="button" aria-label="Aumentar quantidade" class="px-3 py-1 bg-gray-100 hover:bg-gray-200 text-lg" onclick="changeQty({{ product.id }}, 1)">+</button>
+</div>
+<script>
+    function changeQty(id, delta) {
+      const el = document.getElementById(`quantity_${id}`);
+      if (!el) return;
+      let v = parseInt(el.value || '1', 10) + delta;
+      if (isNaN(v) || v < 1) v = 1;
+      el.value = v;
+    }
+</script>

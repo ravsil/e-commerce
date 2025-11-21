@@ -21,6 +21,7 @@ router.resource('images', ImagesController)
 router.resource('stocks', StocksController)
 router.put('/products/:id/add-stock/:quantity', [StocksController, 'addStock']).as('stocks.addStock')
 router.put('/products/:id/reduce-stock/:quantity', [StocksController, 'reduceStock']).as('stocks.reduceStock')
+router.get('/products/:id/detail', [ProductsController, 'detail']).as('products.detail')
 // Admin dashboard route
 router.get('/admin', async ({ view, response, bouncer }) => {
   if (!(await bouncer.allows(isAdmin))) {

@@ -1,0 +1,161 @@
+@component('pages/layout/app')
+  @slot('main')
+    @vite(['resources/js/cart/guestAddToCart.js'])
+    @if(product)
+    <div class="bg-white p-6 text-black shadow-lg max-w-5xl mx-4 mt-8">
+      <div class="grid grid-cols-1 md:grid-cols-12 gap-6">
+        <!-- image gallery -->
+        <div class="md:col-span-7 flex flex-col gap-4">
+          <div class="relative w-full h-[480px] bg-gray-100 rounded overflow-hidden flex items-center justify-center">
+            <img id="mainProductImage" src="{{ product.images.length ? (product.images[0].url ? product.images[0].url : route('images.show', { id: product.images[0].name })) : '/images/placeholder.png' }}" class="w-full h-full object-contain" alt="Product Image">
+
+            <!-- arrows (this code is a bit confusing) -->
+            <button aria-label="Previous image" onclick="prevImage()" class="hidden sm:inline-flex absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+
+            <button aria-label="Next image" onclick="nextImage()" class="hidden sm:inline-flex absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/60 text-white rounded-full p-2">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <!-- mobile arrows -->
+          <div class="flex sm:hidden justify-center gap-4 mt-2">
+            <button aria-label="Previous image" onclick="prevImage()" class="inline-flex items-center justify-center bg-black/10 hover:bg-black/15 text-black rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button aria-label="Next image" onclick="nextImage()" class="inline-flex items-center justify-center bg-black/10 hover:bg-black/15 text-black rounded-full p-3">
+              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+          </div>
+
+          <div class="hidden sm:flex gap-3 overflow-x-auto py-2">
+            @each(image in product.images)
+              <div class="w-20 h-20 rounded border overflow-hidden shrink-0">
+                @if(image.url)
+                  <img src="{{ image.url }}" class="w-full h-full object-cover thumb-image" alt="Thumbnail" onclick="selectImage(this.src)">
+                @elseif(image.name)
+                  <img src="{{ route('images.show', { id: image.name }) }}" class="w-full h-full object-cover thumb-image" alt="Thumbnail" onclick="selectImage(this.src)">
+                @endif
+              </div>
+            @endeach
+          </div>
+        </div>
+        <div class="md:col-span-5 flex flex-col gap-4 place-items-center md:place-items-start">
+          <h1 class="text-xl md:text-2xl font-bold leading-tight">{{ product.name }}</h1>
+
+          <div class="text-3xl text-yellow-600 font-bold">R${{ product.price }}</div>
+
+          <p class="text-sm text-gray-700 mt-2 line-clamp-4">{{ product.description }}</p>
+
+          <div class="mt-2 text-sm">
+            <p><b>Estoque:</b> <span class="{{ product.stock > 0 ? 'text-green-600' : 'text-red-600' }}">{{ product.stock > 0 ? product.stock + ' disponíveis' : 'Esgotado' }}</span></p>
+          </div>
+
+          <div class="mt-4 flex items-center gap-3">
+            @if(auth.isAuthenticated)
+              @form({ action: route('cart.add'), method: 'POST' })
+                <input type="hidden" name="product_id" value="{{ product.id }}" />
+                <div class="flex items-center justify-center gap-2">
+                  <label for="quantity_{{ product.id }}" class="sr-only">Quantidade</label>
+                    @!productintinput({ product: product })
+                </div>
+                <button type="submit" class=" text-center px-3 py-3 bg-black place-self-center shadow-sm shadow-zinc-600/50 hover:shadow-md 
+                  hover:scale-101 transition duration-150 ease-in text-white">
+                  <div class="t-underline">Adicionar ao Carrinho</div>
+                </button>
+              @end
+            @else
+                <div class="flex items-center gap-2">
+                <label for="quantity_{{ product.id }}" class="sr-only">Quantidade</label>
+                  @!productintinput({ product: product })
+                </div>
+                <button id="add_to_cart_guest_{{ product.id }}" class="text-center px-3 py-3 bg-black place-self-center shadow-sm shadow-zinc-600/50 hover:shadow-md 
+                  hover:scale-101 transition duration-150 ease-in text-white" onclick="addToCartGuest({{ product.id }}, {{ product.price }})">
+                <div class="t-underline">Adicionar ao Carrinho</div>
+                </button>
+            @endif
+          </div>
+
+          <div class="mt-3 text-xs text-gray-600">
+            <p>Compra segura • Devolução em 30 dias • Atendimento 24/7</p>
+          </div>
+
+          <div class="mt-4">
+            <a href="{{route('/')}}" class="text-sm text-blue-600 hover:underline">Voltar</a>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script>
+    // Gallery navigation: initialize from thumbnails and track current index
+    let imageUrls = []
+    let currentImageIndex = 0
+
+    function initGallery() {
+      const thumbs = Array.from(document.querySelectorAll('.thumb-image'))
+      imageUrls = thumbs.map(t => t.src)
+      if (imageUrls.length === 0) return
+      const img = document.getElementById('mainProductImage')
+      if (img) img.src = imageUrls[0]
+      currentImageIndex = 0
+    }
+
+    function selectImage(url) {
+      const idx = imageUrls.indexOf(url)
+      if (idx !== -1) currentImageIndex = idx
+      const img = document.getElementById('mainProductImage')
+      if (img && imageUrls[currentImageIndex]) img.src = imageUrls[currentImageIndex]
+    }
+
+    function prevImage() {
+      if (!imageUrls.length) return
+      currentImageIndex = (currentImageIndex - 1 + imageUrls.length) % imageUrls.length
+      const img = document.getElementById('mainProductImage')
+      if (img) img.src = imageUrls[currentImageIndex]
+    }
+
+    function nextImage() {
+      if (!imageUrls.length) return
+      currentImageIndex = (currentImageIndex + 1) % imageUrls.length
+      const img = document.getElementById('mainProductImage')
+      if (img) img.src = imageUrls[currentImageIndex]
+    }
+
+    // initialize when DOM is ready
+    document.addEventListener('DOMContentLoaded', initGallery)
+
+    function addToCartGuest(productId, productPrice) {
+      const quantityInput = document.getElementById(`quantity_${productId}`);
+      let quantity = parseInt(quantityInput?.value || '1', 10);
+      if (isNaN(quantity) || quantity < 1) quantity = 1;
+
+      const storedItems = localStorage.getItem('cartItems');
+      let cartItems = storedItems ? JSON.parse(storedItems) : [];
+      let cartTotal = parseFloat(localStorage.getItem('cartTotal') || '0');
+
+      const existingIndex = cartItems.findIndex(item => item.id === productId);
+      if (existingIndex !== -1) {
+        cartItems[existingIndex].quantity += quantity;
+      } else {
+        cartItems.push({ id: productId, quantity: quantity });
+      }
+
+      const price = Number(productPrice) || 0;
+      cartTotal = Number((cartTotal + price * quantity).toFixed(2));
+
+      localStorage.setItem('cartItems', JSON.stringify(cartItems));
+      localStorage.setItem('cartTotal', cartTotal.toString());
+
+      alert('Produto adicionado ao carrinho!');
+    }
+    </script>
+    @else
+      <div class="max-w-3xl mx-auto mt-8 bg-white p-6 rounded shadow text-center">
+        <h2 class="text-xl font-semibold mb-2">Produto não encontrado</h2>
+        <p class="text-sm text-gray-600 mb-4">O produto que você está tentando ver não existe ou foi removido.</p>
+        <a href="{{ route('products.index') }}" class="px-4 py-2 bg-blue-600 text-white rounded">Voltar aos produtos</a>
+      </div>
+    @endif
+  @endslot
+@endcomponent

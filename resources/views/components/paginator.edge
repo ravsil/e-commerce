@@ -1,13 +1,26 @@
+@let(useRoute = !!routeName)
+
 <div class="flex justify-center items-center gap-1 mt-4 select-none font-medium text-sm flex-wrap">
 
   @if(paginator.currentPage > 1)
-    <a href="{{ paginator.getUrl(paginator.currentPage - 1) }}" class="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition mr-2">
-      &lsaquo;
-    </a>
+    @if(useRoute)
+      <a href="{{ route(routeName, {}, { qs: { page: paginator.currentPage - 1 } }) }}" class="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition mr-2">
+        &lsaquo;
+      </a>
+    @else
+      <a href="{{ paginator.getUrl(paginator.currentPage - 1) }}" class="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition mr-2">
+        &lsaquo;
+      </a>
+    @endif
   @endif
 
-  <a href="{{ paginator.getUrl(1) }}" 
-     class="w-8 h-8 flex items-center justify-center border rounded {{ paginator.currentPage == 1 ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+  @if(useRoute)
+    <a href="{{ route(routeName, {}, { qs: { page: 1 } }) }}" 
+       class="w-8 h-8 flex items-center justify-center border rounded {{ paginator.currentPage == 1 ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+  @else
+    <a href="{{ paginator.getUrl(1) }}" 
+       class="w-8 h-8 flex items-center justify-center border rounded {{ paginator.currentPage == 1 ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+  @endif
     1
   </a>
 
@@ -17,10 +30,17 @@
 
   @each(anchor in paginator.getUrlsForRange(paginator.currentPage - 2, paginator.currentPage + 2))
     @if(anchor.page > 1 && anchor.page < paginator.lastPage)
-      <a href="{{ anchor.url }}" 
-         class="w-8 h-8 flex items-center justify-center border rounded {{ anchor.isActive ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
-        {{ anchor.page }}
-      </a>
+      @if(useRoute)
+        <a href="{{ route(routeName, {}, { qs: { page: anchor.page } }) }}" 
+           class="w-8 h-8 flex items-center justify-center border rounded {{ anchor.isActive ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+          {{ anchor.page }}
+        </a>
+      @else
+        <a href="{{ anchor.url }}" 
+           class="w-8 h-8 flex items-center justify-center border rounded {{ anchor.isActive ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+          {{ anchor.page }}
+        </a>
+      @endif
     @endif
   @endeach
 
@@ -29,16 +49,29 @@
   @endif
 
   @if(paginator.lastPage > 1)
-    <a href="{{ paginator.getUrl(paginator.lastPage) }}" 
-       class="w-8 h-8 flex items-center justify-center border rounded {{ paginator.currentPage == paginator.lastPage ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
-      {{ paginator.lastPage }}
-    </a>
+    @if(useRoute)
+      <a href="{{ route(routeName, {}, { qs: { page: paginator.lastPage } }) }}" 
+         class="w-8 h-8 flex items-center justify-center border rounded {{ paginator.currentPage == paginator.lastPage ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+        {{ paginator.lastPage }}
+      </a>
+    @else
+      <a href="{{ paginator.getUrl(paginator.lastPage) }}" 
+         class="w-8 h-8 flex items-center justify-center border rounded {{ paginator.currentPage == paginator.lastPage ? 'bg-black text-white border-black' : 'hover:bg-gray-100' }}">
+        {{ paginator.lastPage }}
+      </a>
+    @endif
   @endif
 
   @if(paginator.hasMorePages)
-    <a href="{{ paginator.getUrl(paginator.currentPage + 1) }}" class="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition ml-2">
-      &rsaquo;
-    </a>
+    @if(useRoute)
+      <a href="{{ route(routeName, {}, { qs: { page: paginator.currentPage + 1 } }) }}" class="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition ml-2">
+        &rsaquo;
+      </a>
+    @else
+      <a href="{{ paginator.getUrl(paginator.currentPage + 1) }}" class="w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition ml-2">
+        &rsaquo;
+      </a>
+    @endif
   @endif
 
 </div>

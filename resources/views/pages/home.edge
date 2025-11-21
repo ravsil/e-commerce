@@ -13,7 +13,7 @@
             @let(firstImage = product.images[0])
             <div class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black group">
               <div class="w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
-                <a href="{{ route('products.show', { id: product.id }) }}">
+                <a href="{{ route('products.detail', { id: product.id }) }}">
                 @if(firstImage && firstImage.url)
                   <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="{{ firstImage.url }}" alt="{{ product.name }}">
                 @elseif(firstImage && firstImage.name)
@@ -53,7 +53,7 @@
             </div>
           @endeach
           </div>
-					@!component('components/paginator', { paginator: products })
+					@!component('components/paginator', { paginator: products, routeName: 'home' })
           <div class="text-center text-xs text-gray-400 mt-2">
             Página {{ products.currentPage }} de {{ products.lastPage }}
           </div>

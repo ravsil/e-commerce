@@ -9,16 +9,26 @@ import Image from '#models/image'
 import { createProductValidator } from '#validators/product'
 
 export default class ProductsController {
-  public async index({ view, bouncer, response }: HttpContext) {
-    if (!(await bouncer.allows(isAdmin))) {
+  public async index({ view, bouncer, response, request }: HttpContext) {
+    if(!(await bouncer.allows(isAdmin))) {
       return response.status(403).send('Not authorized')
     }
-    const products = await Product.all()
-    for (const product of products) {
-      await product.load('images')
-    }
+
+    const page = request.input('page', 1)
+    const limit = 20
+
+    const products = await Product.query()
+      .preload('images')
+      .orderBy('id', 'desc')
+      .paginate(page, limit)
 
     return view.render('pages/products/index', { products })
+  }
+
+  public async detail({ view , params}: HttpContext) {
+    const product = await Product.findOrFail(params.id)
+    await product.load('images')
+    return view.render('pages/products/detail', { product })
   }
 
   public async get({ params }: HttpContext) {
@@ -31,12 +41,6 @@ export default class ProductsController {
     const product = await Product.findOrFail(params.id)
     const image = await product.load('images')
     return view.render('pages/products/show', { product, image })
-  }
-
-  public async userShow({ params, view }: HttpContext) {
-    const product = await Product.findOrFail(params.id)
-    const image = await product.load('images')
-    return view.render('pages/products/userShow', { product, image })
   }
 
   public async create({ view, bouncer, response }: HttpContext) {

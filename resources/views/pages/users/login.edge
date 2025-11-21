@@ -9,17 +9,17 @@
 </head>
 <body class="flex flex-col lg:flex-row h-screen bg-gray-200">
   <div class="w-1/2 torto-wrap h-full animate-slide-in hidden lg:flex">
-    <div class="bg-black torto w-full h-full flex ">
+    <a href="{{ route('home') }}" class="bg-black torto w-full h-full flex ">
       <p class="text-white place-self-start lg:text-2xl xl:text-3xl 2xl:text-4xl border-2 border-white 
       p-2 px-4 mt-36 lg:ml-7 xl:ml-20">BDV e-commerce<sup>©</sup></p>
-    </div>
+    </a>
   </div>
 
   <div class="h-2/4 flex w-full justify-center flex-col">
-    <div class="lg:hidden bg-black p-4 px-10 place-self-center mt-50 shadow-bottom shadow-zinc-600/50 w-6/11 md:w-5/11 m-4 
+    <a href="{{ route('home') }}" class="lg:hidden bg-black p-4 px-10 place-self-center mt-50 shadow-bottom shadow-zinc-600/50 w-6/11 md:w-5/11 m-4 
     md:max-w-6/11 animate-fade-in-start">
       <p class="text-white border-2 border-white place-self-center p-2 md:px-4 md:text-xl text-nowrap">BDV <br class="md:hidden">e-commerce<sup>©</sup></p>
-    </div>
+    </a>
   <div class="place-self-center m-10 lg:mr-20 lg:mt-30 p-3 md:p-4 bg-white text-black animate-fade-in-start
   shadow-bottom shadow-zinc-600/50 w-9/11 md:w-8/11 md:max-w-9/11 lg:w-9/11 lg:max-w-6/11">
     @form({ action: url, method: 'POST' })
