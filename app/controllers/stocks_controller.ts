@@ -1,5 +1,4 @@
 import type { HttpContext } from '@adonisjs/core/http'
-import app from '@adonisjs/core/services/app'
 import Product from '#models/product'
 
 export default class StocksController {
@@ -16,7 +15,7 @@ export default class StocksController {
 
     return response.redirect().toRoute('products.show', { id: product.id })
   }
-  
+
   public async reduceStock({ params, response }: HttpContext) {
     const product = await Product.findOrFail(params.id)
     const quantity = Number(params.quantity)

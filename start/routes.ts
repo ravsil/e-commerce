@@ -4,8 +4,10 @@ import UsersController from '#controllers/users_controller'
 import ImagesController from '#controllers/images_controller'
 import StocksController from '#controllers/stocks_controller'
 import Product from '#models/product'
+import { middleware as namedMiddleware } from '#start/kernel'
 import { isAdmin } from '#abilities/main'
 import CartsController from '#controllers/carts_controller'
+import PaymentController from '#controllers/payment_controller'
 
 // Authentication routes
 router.get('/login', [UsersController, 'showLogin']).as('auth.login')
@@ -45,8 +47,13 @@ router.get('/', async ({ view, request }) => {
   return view.render('pages/home', { products })
 }).as('home')
 
-router.get('/cart', [CartsController, 'index']).as('cart.index')
-router.post('/cart/add', [CartsController, 'add']).as('cart.add')
-router.put('/cart/:id', [CartsController, 'update']).as('cart.update')
-router.delete('/cart/:id', [CartsController, 'remove']).as('cart.remove')
+router.get('/cart', [CartsController, 'index']).as('cart.index').middleware(namedMiddleware.auth())
+router.post('/cart/add', [CartsController, 'add']).as('cart.add').middleware(namedMiddleware.auth())
+router.put('/cart/:id', [CartsController, 'update']).as('cart.update').middleware(namedMiddleware.auth())
+router.delete('/cart/:id', [CartsController, 'remove']).as('cart.remove').middleware(namedMiddleware.auth())
 router.get('/api/products/:id', [ProductsController, 'get']).as('api.products.get')
+
+// Checkout (Stripe)
+router.post('/checkout', [PaymentController, 'createCheckout']).as('checkout.create').middleware(namedMiddleware.auth())
+router.get('/checkout/success', [PaymentController, 'success']).as('checkout.success').middleware(namedMiddleware.auth())
+router.get('/checkout/cancel', [PaymentController, 'cancel']).as('checkout.cancel')

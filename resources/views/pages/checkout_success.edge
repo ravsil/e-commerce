@@ -1,0 +1,14 @@
+@component('pages/layout/app')
+  @slot('main')
+    <div class="bg-white p-6 text-black shadow-bottom w-8/12 mx-auto">
+      <h2 class="text-xl font-bold">Pagamento realizado com sucesso</h2>
+      <p class="mt-4">Obrigado pela sua compra! Seu pagamento foi processado.</p>
+      @if(sessionId)
+        <p class="mt-2 text-sm text-gray-600">Sessão: {{ sessionId }}</p>
+      @endif
+      <div class="mt-4">
+        <a href="{{ route('home') }}" class="px-3 py-2 bg-blue-600 text-white rounded">Voltar ao início</a>
+      </div>
+    </div>
+  @endslot
+@endcomponent
