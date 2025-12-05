@@ -1,213 +1,222 @@
-{{--  chatgpt's design  --}}
-{{--  TODO: remake css  --}}
+{{--  Redesigned Cart Page  --}}
 @component('pages/layout/app')
   @slot('main')
-    <div class="bg-white p-4 text-black shadow-bottom w-8/12 mx-auto">
-      <h2 class="text-xl font-bold mb-4">Seu Carrinho</h2>
-      @if(total == -1)
-        <table class="w-full table-auto">
-          <thead id="cart-head">
+  <div class="bg-white p-6 text-black shadow-lg w-10/12 mx-auto mt-6">
+
+    <h2 class="text-2xl font-bold mb-6 border-b pb-3 text-center">Seu Carrinho</h2>
+
+    @if(total == -1)
+      {{-- Cart for Guest Users --}}
+      <div id="guest-cart">
+        <table class="w-full table-auto text-left border-collapse">
+          <thead id="cart-head" class="bg-gray-100 text-gray-700">
             <tr>
-              <th>Produto</th>
-              <th>Preço</th>
-              <th>Quantidade</th>
-              <th>Subtotal</th>
-              <th></th>
+              <th class="py-3 px-2 font-semibold">Produto</th>
+              <th class="py-3 px-2 font-semibold">Preço</th>
+              <th class="py-3 px-2 font-semibold">Qtd.</th>
+              <th class="py-3 px-2 font-semibold">Subtotal</th>
+              <th class="py-3 px-2"></th>
             </tr>
           </thead>
-          <tbody id="cart-body"></tbody>
-        </table>
-        <div class="text-right mt-4">
-          <strong id="total">Total: R${{ Number(total).toFixed(2) }}</strong>
-        </div>
-      @elseif(itens.length === 0)
-        <div class="py-4 text-center">Seu carrinho está vazio.</div>
-      @else
-        <table class="w-full table-auto">
-          <thead>
-            <tr>
-              <th>Produto</th>
-              <th>Preço</th>
-              <th>Quantidade</th>
-              <th>Subtotal</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            @each(item in itens)
-              <tr class="border-t">
-                <td class="py-2">
-                  @if(item.product && item.product.images && item.product.images[0])
-                    @let(img = item.product.images[0])
-                    @if(img.url)
-                      <img src="{{ img.url }}" class="inline-block w-16 h-16 object-cover mr-2" />
-                    @elseif(img.name)
-                      <img src="{{ route('images.show', { id: img.name }) }}" class="inline-block w-16 h-16 object-cover mr-2" />
-                    @endif
-                  @endif
-                  <span>{{ item.product ? item.product.name : 'Produto removido' }}</span>
-                </td>
-                <td>R${{ item.product ? item.product.price : '0.00' }}</td>
-                <td>
-                  @form({ action: route('cart.update', { id: item.id }, { qs: { _method: 'PUT' } }), method: 'POST' })
-                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" class="w-20" onchange="this.form.submit()" />
-                    <button type="submit" class="ml-2 px-2 py-1 bg-blue-600 text-white rounded">Confirmar</button>
-                  @end
-                </td>
-                <td>R${{ item.product ? (item.product.price * item.quantity).toFixed(2) : '0.00' }}</td>
-                <td>
-                  @form({ action: route('cart.remove', { id: item.id }, { qs: { _method: 'DELETE' } }), method: 'POST' })
-                    <button type="submit" class="px-2 py-1 bg-red-600 text-white rounded">Remover</button>
-                  @end
-                </td>
-              </tr>
-            @endeach
-          </tbody>
+          <tbody id="cart-body" class="divide-y"></tbody>
         </table>
 
-        <div class="text-right mt-4">
-          <strong id="total">Total: R${{ Number(total).toFixed(2) }}</strong>
+        <div class="text-right mt-6">
+          <strong id="total" class="text-xl font-semibold">Total: R${{ Number(total).toFixed(2) }}</strong>
         </div>
-        @if(auth.isAuthenticated)
-          @if(itens.length > 0)
-            <div class="text-right mt-4">
-              @form({ action: route('checkout.create'), method: 'POST' })
-                <button type="submit" class="px-4 py-2 bg-green-600 text-white rounded">Finalizar Compra</button>
-              @end
-            </div>
-          @endif
-        @endif
+      </div>
+
+    @elseif(itens.length === 0)
+      <div class="py-10 text-center text-gray-500 text-lg">Seu carrinho está vazio.</div>
+
+    @else
+      {{-- Cart for Authenticated Users --}}
+      <table class="w-full table-auto text-left border-collapse">
+        <thead class="bg-gray-100 text-gray-700">
+          <tr>
+            <th class="py-3 px-2 font-semibold">Produto</th>
+            <th class="py-3 px-2 font-semibold">Preço</th>
+            <th class="py-3 px-2 font-semibold">Qtd.</th>
+            <th class="py-3 px-2 font-semibold">Subtotal</th>
+            <th class="py-3 px-2"></th>
+          </tr>
+        </thead>
+
+        <tbody class="divide-y">
+          @each(item in itens)
+            <tr class="hover:bg-gray-50 transition">
+              <td class="py-4 flex items-center gap-4">
+                @if(item.product && item.product.images?.[0])
+                  @let(img = item.product.images[0])
+                  <img
+                    src="{{ img.url ?? route('images.show', { id: img.name }) }}"
+                    class="w-16 h-16 object-cover shadow-sm"
+                  />
+                @endif
+                <span class="font-medium">{{ item.product?.name || 'Produto removido' }}</span>
+              </td>
+
+              <td class="py-4">R$ {{ item.product?.price || '0.00' }}</td>
+
+              <td class="py-4">
+                @form({ action: route('cart.update', { id: item.id }, { qs: { _method: 'PUT' } }), method: 'POST' })
+                  <div class="flex gap-2 items-center">
+                    <input type="number" name="quantity" min="1"
+                      value="{{ item.quantity }}"
+                      class="w-20 border-gray-300 px-2 py-1 shadow-sm focus:ring-blue-500 focus:border-blue-500" />
+
+                    {{-- BOTÃO ATUALIZAR --}}
+                    <button
+                      class="px-3 py-1 bg-blue-600 text-white shadow hover:bg-blue-700 transition transform hover:scale-105">
+                      Atualizar
+                    </button>
+                  </div>
+                @end
+              </td>
+
+              <td class="py-4">
+                R$ {{ (item.product ? item.product.price * item.quantity : 0).toFixed(2) }}
+              </td>
+
+              <td class="py-4">
+                @form({ action: route('cart.remove', { id: item.id }, { qs: { _method: 'DELETE' } }), method: 'POST' })
+
+                  {{-- BOTÃO REMOVER --}}
+                  <button
+                    class="px-3 py-1 bg-red-600 text-white shadow hover:bg-red-700 transition transform hover:scale-105">
+                    Remover
+                  </button>
+
+                @end
+              </td>
+            </tr>
+          @endeach
+        </tbody>
+      </table>
+
+      <div class="text-right mt-6">
+        <strong class="text-xl font-semibold">Total: R${{ Number(total).toFixed(2) }}</strong>
+      </div>
+
+      @if(auth.isAuthenticated && itens.length > 0)
+        <div class="text-right mt-6">
+          @form({ action: route('checkout.create'), method: 'POST' })
+
+            {{-- BOTÃO FINALIZAR COMPRA --}}
+            <button class="px-6 py-3 w-1/4 place-self-center bg-black text-white text-lg shadow transition transform hover:scale-105">
+              Finalizar Compra
+            </button>
+
+          @end
+        </div>
       @endif
+
+    @endif
+
+    {{-- -------- JS Guest Cart -------- --}}
     <script>
       document.addEventListener('DOMContentLoaded', async () => {
         const totalFromServer = Number('{{ total }}');
+        if (totalFromServer !== -1) return;
 
-        if (totalFromServer === -1) {
-          const itens = JSON.parse(localStorage.getItem('cartItems') || '[]');
-          const totalLS = Number(localStorage.getItem('cartTotal') || 0);
+        const itens = JSON.parse(localStorage.getItem('cartItems') || '[]');
+        const tbody = document.querySelector('#cart-body');
+        const totalEl = document.querySelector('#total');
 
-          const tbody = document.querySelector('#cart-body');
-          const totalEl = document.querySelector('#total');
+        if (itens.length === 0) {
+          tbody.innerHTML = `
+            <tr><td colspan="5" class="py-6 text-center text-gray-500">Seu carrinho está vazio.</td></tr>
+          `;
+          document.querySelector('#cart-head').style.display = 'none';
+          totalEl.textContent = '';
+          return;
+        }
 
-          if (itens.length === 0) {
-            tbody.innerHTML = `
-              <tr>
-                <td colspan="5" class="py-4 text-center">Seu carrinho está vazio.</td>
-              </tr>
-            `;
-            document.querySelector('#cart-head').style.display = 'none';
-            totalEl.textContent = '';
-            return;
-          }
+        const fetchedProducts = await Promise.all(
+          itens.map(item =>
+            fetch(`/api/products/${item.id}`).then(r => r.json()).catch(() => null)
+          )
+        );
 
-          const fetchedProducts = await Promise.all(
-            itens.map(item =>
-              fetch(`/api/products/${item.id}`)
-                .then(res => res.json())
-                .catch(() => null)
-            )
-          );
-          for (let i = 0; i < fetchedProducts.length; i++) {
-              fetchedProducts[i].quantity = itens[i].quantity;
-          }
+        fetchedProducts.forEach((p, i) => p.quantity = itens[i].quantity);
 
-          // Render rows with quantity inputs and remove buttons for guest cart
-          tbody.innerHTML = fetchedProducts.map(item => {
+        tbody.innerHTML = fetchedProducts.map(item => {
           const img = item?.images?.[0];
-          const imgTag = img?.url
-            ? `<img src="${img.url}" class="inline-block w-16 h-16 object-cover mr-2" />`
-            : img?.name
-            ? `<img src="/images/${img.name}" class="inline-block w-16 h-16 object-cover mr-2" />`
+          const imgTag = img
+            ? `<img src="${img.url ?? `/images/${img.name}`}" class="w-16 h-16 object-cover shadow-sm" />`
             : '';
 
-          const pid = item?.id ?? 'unknown';
-          const quantity = item?.quantity ?? 1;
-
           return `
-            <tr class="border-t" data-product-id="${pid}">
-              <td class="py-2">
-                ${imgTag}
-                <span>${item?.name || 'Produto removido'}</span>
-              </td>
-
-              <td>R$${item?.price ?? '0.00'}</td>
-
+            <tr class="border-t hover:bg-gray-50 transition" data-product-id="${item?.id}">
+              <td class="py-4 flex items-center gap-4">${imgTag}<span>${item?.name}</span></td>
+              <td>R$${item?.price}</td>
+              <td><input type="number" min="1" value="${item.quantity}" class="qty-input w-20 border-gray-300 px-2 py-1 shadow-sm"
+                         data-product-id="${item.id}" /></td>
+              <td class="subtotal">R$${(item.price * item.quantity).toFixed(2)}</td>
               <td>
-                <input type="number" value="${quantity}" class="w-20 qty-input" data-product-id="${pid}" min="1" />
-              </td>
-
-              <td class="subtotal">R$${item ? (item.price * quantity).toFixed(2) : '0.00'}</td>
-
-              <td>
-                <button class="px-2 py-1 bg-red-600 text-white rounded remove-btn" data-product-id="${pid}">Remover</button>
+                <button class="remove-btn px-3 py-1 bg-red-600 text-white hover:bg-red-700 transition transform hover:scale-105"
+                        data-product-id="${item.id}">
+                  Remover
+                </button>
               </td>
             </tr>
           `;
         }).join('');
 
-        // Attach event listeners for quantity change and remove
-        function saveCartItems(items) {
-          localStorage.setItem('cartItems', JSON.stringify(items));
-        }
+        function save(items) { localStorage.setItem('cartItems', JSON.stringify(items)); }
 
-        function recalcAndRender() {
+        function updateTotals() {
           const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
           let total = 0;
-          const rows = document.querySelectorAll('#cart-body tr');
-          rows.forEach(row => {
-            const pid = Number(row.getAttribute('data-product-id'));
-            const product = fetchedProducts.find(p => p && p.id === pid);
+
+          document.querySelectorAll('#cart-body tr').forEach(row => {
+            const pid = Number(row.dataset.productId);
+            const prod = fetchedProducts.find(p => p.id === pid);
             const item = items.find(i => i.id === pid);
-            const qty = item ? item.quantity : 0;
-            const subtotalEl = row.querySelector('.subtotal');
-            if (product && subtotalEl) {
-              subtotalEl.textContent = 'R$' + (product.price * qty).toFixed(2);
-              total += product.price * qty;
+
+            if (prod && item) {
+              const subtotal = prod.price * item.quantity;
+              row.querySelector('.subtotal').textContent = 'R$' + subtotal.toFixed(2);
+              total += subtotal;
             }
           });
+
           totalEl.textContent = 'Total: R$' + total.toFixed(2);
         }
 
-        document.querySelectorAll('.qty-input').forEach(input => {
-          input.addEventListener('change', (e) => {
-            const target = e.target;
-            const pid = Number(target.getAttribute('data-product-id'));
-            let qty = Number(target.value);
-            if (isNaN(qty) || qty < 1) qty = 1;
+        document.querySelectorAll('.qty-input').forEach(inp => {
+          inp.addEventListener('change', e => {
+            let qty = Number(e.target.value);
+            if (qty < 1) qty = 1;
+
+            const pid = Number(e.target.dataset.productId);
             const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
-            const idx = items.findIndex(i => i.id === pid);
-            if (idx !== -1) {
-              items[idx].quantity = qty;
-              saveCartItems(items);
-              recalcAndRender();
-            }
+            const index = items.findIndex(i => i.id === pid);
+
+            items[index].quantity = qty;
+            save(items);
+
+            updateTotals();
           });
         });
 
         document.querySelectorAll('.remove-btn').forEach(btn => {
-          btn.addEventListener('click', (e) => {
-            const pid = Number(btn.getAttribute('data-product-id'));
+          btn.addEventListener('click', () => {
+            const pid = Number(btn.dataset.productId);
             let items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+
             items = items.filter(i => i.id !== pid);
-            saveCartItems(items);
-            // remove row from DOM
-            const row = document.querySelector(`#cart-body tr[data-product-id="${pid}"]`);
-            if (row) row.remove();
-            recalcAndRender();
-            if (items.length === 0) {
-              document.querySelector('#cart-head').style.display = 'none';
-              document.querySelector('#cart-body').innerHTML = `\n              <tr>\n                <td colspan="5" class="py-4 text-center">Seu carrinho está vazio.</td>\n              </tr>\n            `;
-              document.querySelector('#total').textContent = '';
-            }
+            save(items);
+
+            document.querySelector(`tr[data-product-id="${pid}"]`).remove();
+            updateTotals();
           });
         });
 
-        // initial calculation
-        recalcAndRender();
-
-        }
+        updateTotals();
       });
     </script>
-    </div>
+
+  </div>
   @endslot
 @endcomponent
