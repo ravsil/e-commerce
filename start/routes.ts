@@ -52,6 +52,7 @@ router.post('/cart/add', [CartsController, 'add']).as('cart.add')
 router.put('/cart/:id', [CartsController, 'update']).as('cart.update')
 router.delete('/cart/:id', [CartsController, 'remove']).as('cart.remove')
 router.get('/api/products/:id', [ProductsController, 'get']).as('api.products.get')
+router.get('/api/products', [ProductsController, 'search']).as('api.products.search')
 
 // Checkout (Stripe)
 router.post('/checkout', [PaymentController, 'createCheckout']).as('checkout.create').middleware(namedMiddleware.auth())

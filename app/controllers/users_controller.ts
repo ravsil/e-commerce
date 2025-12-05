@@ -70,8 +70,16 @@ export default class UsersController {
    */
   async store({ request, response, auth, session }: HttpContext) {
     const data = await request.validateUsing(createUserValidator)
+    const email = await User.query().where('email', data.email).first()
+    console.log(email)
+    
+    if (email) {
+      session.flash('error', 'Email já cadastrado')
+      return response.redirect().back()
+    }
+    
     const user = await User.create(data)
-
+    
     try {
       await auth.use('web').login(user)
       session.flash('success', 'Conta criada e logado')

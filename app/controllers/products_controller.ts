@@ -37,6 +37,23 @@ export default class ProductsController {
     return product
   }
 
+  public async search({ request }: HttpContext) {
+    const q = (request.input('q', '') || '').toString().trim()
+    const page = request.input('page', 1)
+    const limit = 12
+
+    const query = Product.query().preload('images').orderBy('id', 'desc')
+
+    if (q.length > 0) {
+      query.where((builder) => {
+        builder.where('name', 'like', `%${q}%`).orWhere('description', 'like', `%${q}%`)
+      })
+    }
+
+    const products = await query.paginate(page, limit)
+    return products.toJSON()
+  }
+
   public async show({ params, view }: HttpContext) {
     const product = await Product.findOrFail(params.id)
     const image = await product.load('images')

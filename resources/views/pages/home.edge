@@ -8,10 +8,10 @@
             Nenhum produto encontrado.
           </div>
         @else
-          <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
+          <div id="products-grid" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 mt-5">
             @each(product in products)
             @let(firstImage = product.images[0])
-            <div class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black group">
+            <div class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black group product-card" data-name="{{ product.name }}" data-description="{{ product.description }}">
               <div class="w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
                 <a href="{{ route('products.detail', { id: product.id }) }}">
                 @if(firstImage && firstImage.url)
@@ -53,7 +53,12 @@
             </div>
           @endeach
           </div>
-					@!component('components/paginator', { paginator: products, routeName: 'home' })
+
+        <div id="no-results" class="hidden bg-white p-6 shadow-bottom text-black text-center">Nenhum produto encontrado.</div>
+
+        <div id="paginator-wrapper">
+        @!component('components/paginator', { paginator: products, routeName: 'home' })
+        </div>
           <div class="text-center text-xs text-gray-400 mt-2">
             Página {{ products.currentPage }} de {{ products.lastPage }}
           </div>
@@ -83,6 +88,152 @@
         localStorage.setItem('cartItems', JSON.stringify(cartItems));
         localStorage.setItem('cartTotal', cartTotal.toString());
     }
+
+    // Global search (server-side) with debounce: fetch paginated results
+    document.addEventListener('DOMContentLoaded', function () {
+      const input = document.getElementById('product-search');
+      if (!input) return;
+
+      const productsGrid = document.getElementById('products-grid');
+      const paginatorWrapper = document.getElementById('paginator-wrapper');
+      const noResults = document.getElementById('no-results');
+
+      const originalGridHTML = productsGrid ? productsGrid.innerHTML : '';
+      const originalPaginatorHTML = paginatorWrapper ? paginatorWrapper.innerHTML : '';
+
+      let debounceTimer = null;
+
+      function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;').replace(/'/g, '&#39;')
+      }
+
+      function buildCard(p) {
+        const firstImage = (p.images && p.images[0]) || null;
+        let imgHtml = '<div class="text-gray-400">Sem imagem</div>';
+        if (firstImage) {
+          if (firstImage.url) {
+            imgHtml = `<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${escapeHtml(firstImage.url)}" alt="${escapeHtml(p.name)}">`;
+          } else if (firstImage.name) {
+            imgHtml = `<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${escapeHtml('/images/' + firstImage.name)}" alt="${escapeHtml(p.name)}">`;
+          }
+        }
+
+        return `
+          <div class="block bg-white overflow-hidden shadow-bottom hover:shadow-md transition duration-200 ease-in text-black group product-card" data-name="${escapeHtml(p.name)}" data-description="${escapeHtml(p.description || '')}">
+            <div class="w-full h-64 bg-gray-100 flex items-center justify-center overflow-hidden relative">
+              <a href="/products/${p.id}/detail">
+                ${imgHtml}
+              </a>
+            </div>
+            <div class="p-3 flex flex-col gap-2">
+              <h2 class="text-sm md:text-base font-semibold truncate" title="${escapeHtml(p.name)}">${escapeHtml(p.name)}</h2>
+              <div class="flex items-center justify-between">
+                <div class="text-lg font-bold text-gray-900">R$ ${escapeHtml(p.price)}</div>
+                <a href="/products/${p.id}/detail" class="text-xs text-gray-600">Ver</a>
+              </div>
+              <p class="text-xs text-gray-500 line-clamp-2">${escapeHtml(p.description || '')}</p>
+            </div>
+          </div>
+        `;
+      }
+
+      function renderPaginator(meta, query) {
+        if (!paginatorWrapper) return;
+        if (!meta) { paginatorWrapper.innerHTML = ''; return; }
+
+        const current = meta.currentPage || meta.current_page || 1;
+        const last = meta.lastPage || meta.last_page || meta.last_page || 1;
+
+        if (last <= 1) {
+          paginatorWrapper.innerHTML = '';
+          return;
+        }
+
+        // simple paginator (prev, pages, next)
+        let html = '<div class="flex justify-center items-center gap-1 mt-4 select-none font-medium text-sm flex-wrap">';
+
+        if (current > 1) {
+          html += `<button data-page="${current - 1}" class="page-btn w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 mr-2">&lsaquo;</button>`;
+        }
+
+        // show a few pages around current
+        const start = Math.max(1, current - 2);
+        const end = Math.min(last, current + 2);
+
+        if (start > 1) html += `<button data-page="1" class="page-btn w-8 h-8 flex items-center justify-center border rounded">1</button>`;
+        if (start > 2) html += `<span class="w-8 h-8 flex items-center justify-center text-gray-400">...</span>`;
+
+        for (let p = start; p <= end; p++) {
+          html += `<button data-page="${p}" class="page-btn w-8 h-8 flex items-center justify-center border rounded ${p === current ? 'bg-black text-white border-black' : 'hover:bg-gray-100'}">${p}</button>`;
+        }
+
+        if (end < last - 1) html += `<span class="w-8 h-8 flex items-center justify-center text-gray-400">...</span>`;
+        if (end < last) html += `<button data-page="${last}" class="page-btn w-8 h-8 flex items-center justify-center border rounded">${last}</button>`;
+
+        if (current < last) {
+          html += `<button data-page="${current + 1}" class="page-btn w-8 h-8 flex items-center justify-center border rounded hover:bg-gray-100 transition ml-2">&rsaquo;</button>`;
+        }
+
+        html += '</div>';
+        paginatorWrapper.innerHTML = html;
+
+        // attach listeners
+        Array.from(paginatorWrapper.querySelectorAll('.page-btn')).forEach(btn => {
+          btn.addEventListener('click', (ev) => {
+            const page = parseInt(btn.getAttribute('data-page')) || 1;
+            performSearch(input.value, page);
+          })
+        })
+      }
+
+      async function performSearch(q, page = 1) {
+        q = (q || '').trim();
+        if (q === '') {
+          // restore original server-rendered grid and paginator
+          productsGrid.innerHTML = originalGridHTML;
+          paginatorWrapper.innerHTML = originalPaginatorHTML;
+          if (noResults) noResults.classList.add('hidden');
+          return;
+        }
+
+        try {
+          const res = await fetch(`/api/products?q=${encodeURIComponent(q)}&page=${page}`);
+          if (!res.ok) throw new Error('Network error');
+          const json = await res.json();
+
+          const items = json.data || json;
+          const meta = json.meta || {
+            currentPage: json.currentPage || json.current_page,
+            lastPage: json.lastPage || json.last_page,
+          };
+
+          if (!items || items.length === 0) {
+            productsGrid.innerHTML = '';
+            if (noResults) {
+              noResults.classList.remove('hidden');
+              noResults.classList.add('block');
+            }
+            paginatorWrapper.innerHTML = '';
+            return;
+          }
+
+          if (noResults) noResults.classList.remove('block'), noResults.classList.add('hidden');
+
+          productsGrid.innerHTML = items.map(buildCard).join('');
+          renderPaginator(json.meta || { currentPage: json.currentPage, lastPage: json.lastPage, last_page: json.last_page, current_page: json.current_page, last_page: json.last_page, current_page: json.current_page });
+
+        } catch (err) {
+          console.error('Search error', err);
+        }
+      }
+
+      input.addEventListener('input', function (ev) {
+        clearTimeout(debounceTimer);
+        debounceTimer = setTimeout(() => performSearch(input.value, 1), 300);
+      });
+    });
     </script>
   @endslot
 @endcomponent
