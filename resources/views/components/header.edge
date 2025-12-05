@@ -19,7 +19,7 @@
       @include('components/user_dropdown')
     @else
       <a href="{{ route('auth.login') }}" class="text-white border p-1 md:p-2 px-2">Entrar</a>
-      <a href="{{ route('cart.index')}}">
+      <a href="{{ route('cart.index')}}" class="flex items-center">
         @!cartsvg({input: 'w-8 h-8 text-white'})
       </a>
     @endif

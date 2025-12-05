@@ -2,6 +2,7 @@ import type { HttpContext } from '@adonisjs/core/http'
 import Env from '#start/env'
 import Stripe from 'stripe'
 import Cart from '#models/cart'
+import Product from '#models/product'
 
 const stripe = new Stripe(Env.get('STRIPE_SECRET') || '', { apiVersion: '2022-11-15' })
 
@@ -59,9 +60,57 @@ export default class PaymentController {
         return response.redirect().toPath(sessionObj.url || '/')
     }
 
-    public async success({ request, view }: HttpContext) {
+    public async success({ request, view, auth, session }: HttpContext) {
         const sessionId = request.input('session_id')
-        // Render simple success page. Clearing cart and stock update happens via webhook or explicit flow.
+
+        if (!sessionId) {
+            return view.render('pages/checkout_success', { sessionId })
+        }
+
+        try {
+            const stripeSession = await stripe.checkout.sessions.retrieve(sessionId)
+
+            // Ensure payment was completed
+            if (stripeSession.payment_status !== 'paid') {
+                session.flash('error', 'Pagamento não confirmado ainda')
+                return view.render('pages/checkout_success', { sessionId })
+            }
+
+            const user = auth.user!
+            if (!user) {
+                session.flash('error', 'Usuário não autenticado')
+                return view.render('pages/checkout_success', { sessionId })
+            }
+
+            // If metadata contains a user id, ensure it matches the logged in user
+            const metaUserId = stripeSession.metadata?.user_id
+            if (metaUserId && String(metaUserId) !== String(user.id)) {
+                session.flash('error', 'Usuário inconsistente com pagamento')
+                return view.render('pages/checkout_success', { sessionId })
+            }
+
+            // Load cart items and decrement stock for each product, then clear cart
+            const items = await Cart.query()
+                .where('user_id', user.id)
+                .preload('product')
+
+            if (items.length) {
+                for (const item of items) {
+                    if (!item.product) continue
+                    const product = await Product.findOrFail(item.product.id)
+                    product.stock -= item.quantity
+                    if (product.stock < 0) product.stock = 0
+                    await product.save()
+                }
+
+                await Cart.query().where('user_id', user.id).delete()
+                session.flash('success', 'Pagamento confirmado — estoque atualizado e carrinho limpo')
+            }
+        } catch (error) {
+            console.error('Error verifying Stripe session:', error)
+            session.flash('error', 'Erro ao verificar pagamento')
+        }
+
         return view.render('pages/checkout_success', { sessionId })
     }
 
