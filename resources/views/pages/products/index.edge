@@ -21,9 +21,9 @@
           </span>
         </a>
           <span class="flex flex-row justify-between">  
-            <a class="" href="{{route('products.edit', {id: product.id})}}">Editar</a>
+            <a class="bg-yellow-500 text-white px-2 py-1 shadow-sm shadow-black/50" href="{{route('products.edit', {id: product.id})}}">Editar</a>
             @form({ action: route('products.destroy', { id: product.id }, { qs: { _method: 'DELETE' }}) })
-            <button type="submit">
+            <button type="submit" class="text-white bg-black py-1 px-2 shadow-sm shadow-black/50">
               deletar
             </button>
           </span>
