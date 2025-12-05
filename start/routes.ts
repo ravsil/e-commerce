@@ -47,10 +47,10 @@ router.get('/', async ({ view, request }) => {
   return view.render('pages/home', { products })
 }).as('home')
 
-router.get('/cart', [CartsController, 'index']).as('cart.index').middleware(namedMiddleware.auth())
-router.post('/cart/add', [CartsController, 'add']).as('cart.add').middleware(namedMiddleware.auth())
-router.put('/cart/:id', [CartsController, 'update']).as('cart.update').middleware(namedMiddleware.auth())
-router.delete('/cart/:id', [CartsController, 'remove']).as('cart.remove').middleware(namedMiddleware.auth())
+router.get('/cart', [CartsController, 'index']).as('cart.index')
+router.post('/cart/add', [CartsController, 'add']).as('cart.add')
+router.put('/cart/:id', [CartsController, 'update']).as('cart.update')
+router.delete('/cart/:id', [CartsController, 'remove']).as('cart.remove')
 router.get('/api/products/:id', [ProductsController, 'get']).as('api.products.get')
 
 // Checkout (Stripe)

@@ -111,7 +111,7 @@
               fetchedProducts[i].quantity = itens[i].quantity;
           }
 
-          // updating doesn't work yet, will fix when definitive HTML comes
+          // Render rows with quantity inputs and remove buttons for guest cart
           tbody.innerHTML = fetchedProducts.map(item => {
           const img = item?.images?.[0];
           const imgTag = img?.url
@@ -120,8 +120,11 @@
             ? `<img src="/images/${img.name}" class="inline-block w-16 h-16 object-cover mr-2" />`
             : '';
 
+          const pid = item?.id ?? 'unknown';
+          const quantity = item?.quantity ?? 1;
+
           return `
-            <tr class="border-t">
+            <tr class="border-t" data-product-id="${pid}">
               <td class="py-2">
                 ${imgTag}
                 <span>${item?.name || 'Produto removido'}</span>
@@ -130,17 +133,77 @@
               <td>R$${item?.price ?? '0.00'}</td>
 
               <td>
-                <input type="number" value="${item.quantity}" class="w-20" />
+                <input type="number" value="${quantity}" class="w-20 qty-input" data-product-id="${pid}" min="1" />
               </td>
 
-              <td>R$${item ? (item.price * item.quantity).toFixed(2) : '0.00'}</td>
+              <td class="subtotal">R$${item ? (item.price * quantity).toFixed(2) : '0.00'}</td>
 
-              <td></td>
+              <td>
+                <button class="px-2 py-1 bg-red-600 text-white rounded remove-btn" data-product-id="${pid}">Remover</button>
+              </td>
             </tr>
           `;
         }).join('');
 
-        totalEl.textContent = 'Total: R$' + totalLS.toFixed(2);
+        // Attach event listeners for quantity change and remove
+        function saveCartItems(items) {
+          localStorage.setItem('cartItems', JSON.stringify(items));
+        }
+
+        function recalcAndRender() {
+          const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+          let total = 0;
+          const rows = document.querySelectorAll('#cart-body tr');
+          rows.forEach(row => {
+            const pid = Number(row.getAttribute('data-product-id'));
+            const product = fetchedProducts.find(p => p && p.id === pid);
+            const item = items.find(i => i.id === pid);
+            const qty = item ? item.quantity : 0;
+            const subtotalEl = row.querySelector('.subtotal');
+            if (product && subtotalEl) {
+              subtotalEl.textContent = 'R$' + (product.price * qty).toFixed(2);
+              total += product.price * qty;
+            }
+          });
+          totalEl.textContent = 'Total: R$' + total.toFixed(2);
+        }
+
+        document.querySelectorAll('.qty-input').forEach(input => {
+          input.addEventListener('change', (e) => {
+            const target = e.target;
+            const pid = Number(target.getAttribute('data-product-id'));
+            let qty = Number(target.value);
+            if (isNaN(qty) || qty < 1) qty = 1;
+            const items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            const idx = items.findIndex(i => i.id === pid);
+            if (idx !== -1) {
+              items[idx].quantity = qty;
+              saveCartItems(items);
+              recalcAndRender();
+            }
+          });
+        });
+
+        document.querySelectorAll('.remove-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            const pid = Number(btn.getAttribute('data-product-id'));
+            let items = JSON.parse(localStorage.getItem('cartItems') || '[]');
+            items = items.filter(i => i.id !== pid);
+            saveCartItems(items);
+            // remove row from DOM
+            const row = document.querySelector(`#cart-body tr[data-product-id="${pid}"]`);
+            if (row) row.remove();
+            recalcAndRender();
+            if (items.length === 0) {
+              document.querySelector('#cart-head').style.display = 'none';
+              document.querySelector('#cart-body').innerHTML = `\n              <tr>\n                <td colspan="5" class="py-4 text-center">Seu carrinho está vazio.</td>\n              </tr>\n            `;
+              document.querySelector('#total').textContent = '';
+            }
+          });
+        });
+
+        // initial calculation
+        recalcAndRender();
 
         }
       });

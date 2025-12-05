@@ -12,5 +12,19 @@
     {{{ await $slots.main() }}}
   </section>
 
+  @if(flashMessages.get('cart_merged'))
+    <script>
+      // Clear guest cart from localStorage after successful merge
+      try {
+        localStorage.removeItem('cartItems')
+        localStorage.removeItem('cartTotal')
+        // also try to clear the cookie if present
+        document.cookie = 'guestCart=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+        document.cookie = 'clearGuestCart=; Path=/; Expires=Thu, 01 Jan 1970 00:00:00 GMT'
+      } catch (e) {
+      }
+    </script>
+  @endif
+
 </body>
 </html>

@@ -27,7 +27,12 @@ export default class CartsController {
     public async add({ request, response, auth, session }: HttpContext) {
         const user = auth.user!
         const productId = request.input('product_id')
-        const quantity = request.input('quantity', 1)
+        let quantity = request.input('quantity', 1)
+        // Ensure quantity is a number (forms send strings)
+        quantity = Number(quantity)
+        if (isNaN(quantity) || quantity < 1) {
+            quantity = 1
+        }
 
         const product = await Product.find(productId)
         if (!product) {
@@ -46,13 +51,14 @@ export default class CartsController {
             .first()
 
         if (exiting) {
-            exiting.quantity += quantity
+            // Make sure stored quantity is numeric before adding
+            exiting.quantity = Number(exiting.quantity) + Number(quantity)
             await exiting.save()
         } else {
             const cart = new Cart()
             cart.userId = user.id
             cart.productId = productId
-            cart.quantity = quantity
+            cart.quantity = Number(quantity)
             await cart.save()
         }
 
