@@ -1,5 +1,19 @@
 <div class="flex flex-row items-center grow place-content-center">
+  <!-- Desktop search input (hidden on mobile) -->
   <input id="product-search" class="hidden md:block bg-gray-200 px-4 w-2/3 h-10 focus:outline-none inset-shadow-xs
     focus:inset-shadow-sm inset-shadow-zinc-900/100 transition duration-157 ease-in"    
     placeholder="Buscar Produto..." type="text" name="search">
+
+  <!-- Mobile search button (visible only on small screens) -->
+  <button id="mobile-search-button" type="button" aria-expanded="false" aria-controls="mobile-search-dropdown"
+    class="md:hidden text-white p-2 flex items-center justify-center">
+    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35m0 0A7.5 7.5 0 1116.65 16.65z" />
+    </svg>
+  </button>
+
+  <!-- Mobile dropdown search (hidden by default) -->
+  <div id="mobile-search-dropdown" class="hidden absolute left-1/2 transform -translate-x-1/2 top-full mt-2 w-11/12 bg-white p-2 rounded shadow-lg z-50">
+    <input id="mobile-search-input" class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none" placeholder="Buscar Produto..." type="text" name="search">
   </div>
+</div>
